@@ -23,7 +23,8 @@ public class TimerConfig {
         this.createdAt = Instant.now();
     }
 
-    public TimerConfig(int uid, String name, Long roundDuration, Long restDuration, Long totalTimerDuration, boolean repeats, Integer rounds) {
+    public TimerConfig(int uid, String name, Long roundDuration, Long restDuration, Long totalTimerDuration,
+                       boolean repeats, Integer rounds) {
         this.uid = uid;
         this.name = name;
         this.roundDuration = roundDuration;
