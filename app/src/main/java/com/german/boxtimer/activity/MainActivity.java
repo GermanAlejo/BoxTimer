@@ -4,17 +4,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import com.german.boxtimer.R;
-import com.german.boxtimer.viewModel.RunningTimerViewModel;
+import com.german.boxtimer.TimerApp;
+import com.german.boxtimer.repository.TimerConfigRepository;
+import com.german.boxtimer.utils.AppViewModelFactory;
+import com.german.boxtimer.viewModel.MainTimerViewModel;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private RunningTimerViewModel runningTimerViewModel;
+    private MainTimerViewModel mainTimerViewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,33 +26,55 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // 1. Get the ViewModel
-        runningTimerViewModel = new ViewModelProvider(this).get(RunningTimerViewModel.class);
+        mainTimerViewModel = getMainTimerViewModel();
+        //Get main control views
         View roundControlView = findViewById(R.id.control_round);
         View restControlView = findViewById(R.id.control_rest);
         View numberControlView = findViewById(R.id.control_number_rounds);
 
-        ImageView plusRoundControl = roundControlView.findViewById(R.id.more_button);
-        ImageView lessRoundControl = roundControlView.findViewById(R.id.less_button);
-
-        TextView roundTimeText = findViewById(R.id.timeText);
-
+        //Button to start timer
         Button startButton = findViewById(R.id.startButton);
 
+        //Get view text to change
+        TextView roundTimeText = findViewById(R.id.timeText);
+        TextView restTimeText = findViewById(R.id.rest_time);
+        TextView numRoundsText = findViewById(R.id.numRounds);
+
         // 2. Observe state: whenever the ViewModel's value changes, update the screen
-        runningTimerViewModel.isRunning().observe(this, isRunning -> startButton.setEnabled(!isRunning));
+
+
+        //Open timer view
+        openNewView(startButton, RunningTimerActivity.class);
 
         // 3. Forward clicks: no logic here
-        startButton.setOnClickListener(v -> {
-            //runningTimerViewModel.start();
-            Intent intent = new Intent(MainActivity.this, RunningTimerActivity.class);
-            startActivity(intent);
-        });
-        plusRoundControl.setOnClickListener(v -> runningTimerViewModel.increaseButton());
-        lessRoundControl.setOnClickListener(v -> runningTimerViewModel.decreaseButton());
-        runningTimerViewModel.getValButton().observe(this, number -> roundTimeText.setText(String.valueOf(number)));
+        //set button listeners
+        bindControl(roundControlView, roundTimeText, mainTimerViewModel.getRoundTime(),
+                mainTimerViewModel::increaseRound, mainTimerViewModel::decreaseRound);
+        bindControl(restControlView, restTimeText, mainTimerViewModel.getRestTime(),
+                mainTimerViewModel::increaseRest,
+                mainTimerViewModel::decreaseRest);
+        bindControl(numberControlView, numRoundsText, mainTimerViewModel.getNumRounds(),
+                mainTimerViewModel::increaseNumRounds, mainTimerViewModel::decreaseNumRounds);
     }
 
-    public void openTimerView(View view) {
+    public <T>void openNewView(Button view, Class<T> targetClass) {
+        view.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, targetClass);
+            intent.putExtra("timerId", mainTimerViewModel.getTimerCurrentConfig().getUid());
+            startActivity(intent);
+        });
+    }
 
+    private void bindControl(View control, TextView textView, LiveData<Integer> dataValue, Runnable moreFunc, Runnable lessFunc) {
+        control.findViewById(R.id.more_button).setOnClickListener(v -> moreFunc.run());
+        control.findViewById(R.id.less_button).setOnClickListener(v -> lessFunc.run());
+
+        dataValue.observe(this, number -> textView.setText(String.valueOf(number)));
+    }
+
+    private MainTimerViewModel getMainTimerViewModel() {
+        TimerConfigRepository repo = ((TimerApp) getApplication()).getRepository();
+        return new ViewModelProvider(this, new AppViewModelFactory(repo))
+                .get(MainTimerViewModel.class);
     }
 }
