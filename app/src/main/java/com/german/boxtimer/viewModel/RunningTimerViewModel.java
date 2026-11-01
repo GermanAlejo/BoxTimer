@@ -2,20 +2,21 @@ package com.german.boxtimer.viewModel;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.german.boxtimer.entity.timer.TimerConfig;
 import com.german.boxtimer.repository.TimerConfigRepository;
+import com.german.boxtimer.utils.TimeUtils;
 
 import static com.german.boxtimer.utils.TimeUtils.format;
 
 
 public class RunningTimerViewModel extends ViewModel {
 
-    private static final long DEFAULT_DURATION_MILLIS = 5 * 60 * 1000L;   // temporary: 5 minutes
     private final MutableLiveData<Boolean> running = new MutableLiveData<>(false);
-    private final MutableLiveData<String> displayTimeText = new MutableLiveData<>();
+    private final MutableLiveData<String> runningTimerText = new MutableLiveData<>();
     private long endTimeMillis;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final TimerConfigRepository timerRepo;
@@ -34,19 +35,23 @@ public class RunningTimerViewModel extends ViewModel {
     }
 
     private void initializeDisplayData() {
-        displayTimeText.postValue(timerConfig.getRoundDuration().toString());
+        Long timeMillis = TimeUtils.toMillis(timerConfig.getRoundDuration());
+        endTimeMillis = timeMillis;
+        String time = TimeUtils.format(timeMillis);
+        runningTimerText.postValue(time);
     }
 
-    private final Runnable tick = new Runnable() {
+    private final Runnable tickTimerTask = new Runnable() {
         @Override
         public void run() {
-            long remaining = endTimeMillis - System.currentTimeMillis();
+            //Total time minus current moment
+            long remaining = endTimeMillis - SystemClock.elapsedRealtime();
             if (remaining <= 0) {
-                displayTimeText.setValue("00:00");
+                runningTimerText.setValue("00:00");
                 running.setValue(false);
                 return;                       // stop ticking
             }
-            displayTimeText.setValue(format(remaining));
+            runningTimerText.setValue(format(remaining));
             handler.postDelayed(this, 100);   // schedule the next tick
         }
     };
@@ -56,20 +61,25 @@ public class RunningTimerViewModel extends ViewModel {
     public void start() {
         if (timerConfig == null) return;   // not loaded yet
         if (Boolean.TRUE.equals(running.getValue())) return;
-        endTimeMillis = System.currentTimeMillis() + timerConfig.getRoundDuration();
+        //save future date (finish date) we calculate agains that
+        endTimeMillis = SystemClock.elapsedRealtime() + TimeUtils.toMillis(timerConfig.getRoundDuration());
         running.setValue(true);
-        handler.post(tick);
+        handler.post(tickTimerTask);
     }
 
     public void reset() {
-        handler.removeCallbacks(tick);
+        handler.removeCallbacks(tickTimerTask);
         running.setValue(false);
-        displayTimeText.setValue(format(DEFAULT_DURATION_MILLIS));
+        runningTimerText.setValue(format(TimeUtils.toMillis(timerConfig.getRoundDuration())));
+    }
+
+    public LiveData<String> getDisplayTimeText() {
+        return runningTimerText;
     }
 
     @Override
     protected void onCleared() {
-        handler.removeCallbacks(tick);   // screen is gone for good: stop ticking
+        handler.removeCallbacks(tickTimerTask);   // screen is gone for good: stop ticking
     }
 
 }

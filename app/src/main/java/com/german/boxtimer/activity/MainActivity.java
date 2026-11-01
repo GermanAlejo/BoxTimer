@@ -13,10 +13,12 @@ import com.german.boxtimer.TimerApp;
 import com.german.boxtimer.repository.TimerConfigRepository;
 import com.german.boxtimer.utils.AppViewModelFactory;
 import com.german.boxtimer.viewModel.MainTimerViewModel;
+import timber.log.Timber;
 
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     private MainTimerViewModel mainTimerViewModel;
 
 
@@ -24,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Timber.tag(TAG).i("Creating main view");
         // 1. Get the ViewModel
         mainTimerViewModel = getMainTimerViewModel();
         //Get main control views
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public <T>void openNewView(Button view, Class<T> targetClass) {
+        Timber.tag(TAG).i("Loading new view");
         view.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, targetClass);
             intent.putExtra("timerId", mainTimerViewModel.getTimerCurrentConfig().getUid());

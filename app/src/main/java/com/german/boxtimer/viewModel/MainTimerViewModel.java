@@ -5,10 +5,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.german.boxtimer.entity.timer.TimerConfig;
 import com.german.boxtimer.repository.TimerConfigRepository;
+import timber.log.Timber;
 
 
 public class MainTimerViewModel extends ViewModel {
-
+    private static final String TAG = "MainTimerVM";
     private TimerConfigRepository timerRepo;
     private final MutableLiveData<Integer> displayRoundNumber = new MutableLiveData<>();
     private final MutableLiveData<Integer> displayRestNumber = new MutableLiveData<>();
@@ -21,6 +22,7 @@ public class MainTimerViewModel extends ViewModel {
     public MainTimerViewModel(TimerConfigRepository repo) {
         timerRepo = repo;
         timerRepo.loadInitial(loaded -> {
+            Timber.tag(TAG).i("Loading timer config from repo");
             timerConfig = loaded;
             initializeDisplayData();                 // fills all display values once
         });
