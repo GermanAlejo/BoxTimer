@@ -12,6 +12,9 @@ import com.german.boxtimer.utils.AppViewModelFactory;
 import com.german.boxtimer.viewModel.RunningTimerViewModel;
 import timber.log.Timber;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 public class RunningTimerActivity extends AppCompatActivity {
 
     private static final String TAG = "RunningTimerActivity";
@@ -26,15 +29,30 @@ public class RunningTimerActivity extends AppCompatActivity {
         runningTimerViewModel = getRunningTimerViewModel();
 
         Button startButton = findViewById(R.id.startButton);
-        Button stopButton = findViewById(R.id.resetButton);
+        Button resetButton = findViewById(R.id.resetButton);
+        Button pauseButton = findViewById(R.id.pauseButton);
         TextView runningTimerText = findViewById(R.id.runningTimerText);
 
-        startButton.setOnClickListener(v -> runningTimerViewModel.start());
+        resetButton.setOnClickListener(v -> {
+            startButton.setVisibility(VISIBLE);
+            pauseButton.setVisibility(GONE);
+            runningTimerViewModel.reset();
+        });
+        startButton.setOnClickListener(v -> {
+            startButton.setVisibility(GONE);
+            pauseButton.setVisibility(VISIBLE);
+            runningTimerViewModel.start();
+        });
+        pauseButton.setOnClickListener(v -> {
+            startButton.setVisibility(VISIBLE);
+            pauseButton.setVisibility(GONE);
+            runningTimerViewModel.pause();
+        });
 
-        stopButton.setOnClickListener(v -> runningTimerViewModel.reset());
 
         //Change the state when running
         runningTimerViewModel.isRunning().observe(this, isRunning -> startButton.setEnabled(!isRunning));
+        runningTimerViewModel.isRunning().observe(this, pauseButton::setEnabled);
         runningTimerViewModel.getDisplayTimeText().observe(this, runningTimerText::setText);
     }
 

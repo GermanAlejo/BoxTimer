@@ -22,6 +22,8 @@ public class RunningTimerViewModel extends ViewModel {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final TimerConfigRepository timerRepo;
     private TimerConfig timerConfig;
+    private boolean isPaused = false;
+    private long pauseTimeMillis;
 
     public RunningTimerViewModel(TimerConfigRepository repo, Long timerId) {
         Timber.tag(TAG).i("Creating Running timer VM");
@@ -63,8 +65,13 @@ public class RunningTimerViewModel extends ViewModel {
     public void start() {
         if (timerConfig == null) return;   // not loaded yet
         if (Boolean.TRUE.equals(running.getValue())) return;
-        //save future date (finish date) we calculate agains that
-        endTimeMillis = SystemClock.elapsedRealtime() + TimeUtils.toMillis(timerConfig.getRoundDuration());
+        //If pause we don't want to recalculate the time
+        if(!isPaused) {
+            //save future date (finish date) we calculate agains that
+            endTimeMillis = SystemClock.elapsedRealtime() + TimeUtils.toMillis(timerConfig.getRoundDuration());
+        } else {
+            endTimeMillis = SystemClock.elapsedRealtime() + pauseTimeMillis;
+        }
         running.setValue(true);
         handler.post(tickTimerTask);
     }
@@ -73,6 +80,13 @@ public class RunningTimerViewModel extends ViewModel {
         handler.removeCallbacks(tickTimerTask);
         running.setValue(false);
         runningTimerText.setValue(format(TimeUtils.toMillis(timerConfig.getRoundDuration())));
+    }
+
+    public void pause() {
+        isPaused = true;
+        pauseTimeMillis = endTimeMillis - SystemClock.elapsedRealtime();
+        handler.removeCallbacks(tickTimerTask);
+        running.setValue(false);
     }
 
     public LiveData<String> getDisplayTimeText() {
