@@ -9,12 +9,13 @@ import androidx.lifecycle.ViewModel;
 import com.german.boxtimer.entity.timer.TimerConfig;
 import com.german.boxtimer.repository.TimerConfigRepository;
 import com.german.boxtimer.utils.TimeUtils;
+import timber.log.Timber;
 
 import static com.german.boxtimer.utils.TimeUtils.format;
 
 
 public class RunningTimerViewModel extends ViewModel {
-
+    private static final String TAG = "RunningTimerVM";
     private final MutableLiveData<Boolean> running = new MutableLiveData<>(false);
     private final MutableLiveData<String> runningTimerText = new MutableLiveData<>();
     private long endTimeMillis;
@@ -23,10 +24,11 @@ public class RunningTimerViewModel extends ViewModel {
     private TimerConfig timerConfig;
 
     public RunningTimerViewModel(TimerConfigRepository repo, Long timerId) {
+        Timber.tag(TAG).i("Creating Running timer VM");
         timerRepo = repo;
         repo.getTimerConfigById(timerId, loaded -> {
             if (loaded == null) {
-                //Log here
+                Timber.tag(TAG).w("Timer not found, cancelling");
                 return;
             }
             timerConfig = loaded;

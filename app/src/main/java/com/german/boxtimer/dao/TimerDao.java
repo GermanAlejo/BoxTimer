@@ -1,9 +1,6 @@
 package com.german.boxtimer.dao;
 
-import androidx.room.Dao;
-import androidx.room.Query;
-import androidx.room.Insert;
-import androidx.room.Delete;
+import androidx.room.*;
 import com.german.boxtimer.entity.timer.TimerConfig;
 
 @Dao
@@ -17,8 +14,8 @@ public interface TimerDao {
     @Query("SELECT * FROM timerconfig tc ORDER BY tc.createdAt DESC LIMIT 1")
     TimerConfig findLast();
 
-    //@Update
-    //void update(TimerConfig timer);
+    @Update
+    void update(TimerConfig timer);
 
     @Delete
     void delete(TimerConfig timer);

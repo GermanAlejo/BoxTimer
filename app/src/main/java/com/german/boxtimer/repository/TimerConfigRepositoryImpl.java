@@ -49,4 +49,9 @@ public class TimerConfigRepositoryImpl implements TimerConfigRepository {
     public void deleteTimerConfig(TimerConfig timer) {
         executor.execute(() -> timerDao.delete(timer));
     }
+
+    @Override
+    public void updateTimerConfig(TimerConfig timer) {
+        executor.execute(() -> timerDao.update(timer));
+    }
 }

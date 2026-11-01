@@ -10,11 +10,13 @@ import timber.log.Timber;
 
 public class MainTimerViewModel extends ViewModel {
     private static final String TAG = "MainTimerVM";
-    private TimerConfigRepository timerRepo;
+    private final TimerConfigRepository timerRepo;
     private final MutableLiveData<Integer> displayRoundNumber = new MutableLiveData<>();
     private final MutableLiveData<Integer> displayRestNumber = new MutableLiveData<>();
     private final MutableLiveData<Integer> displayNumRoundsNumber = new MutableLiveData<>();
     private TimerConfig timerConfig;
+    //Flag to control if the config was changed
+    private boolean isDirty = false;
 
 
     //first get default/last timer from database
@@ -56,16 +58,19 @@ public class MainTimerViewModel extends ViewModel {
 
     public void increaseRound() {
         timerConfig.incrementRound();
+        isDirty = true;
         changeButtonStatus(displayRoundNumber, 1, 1);
     }
 
     public void decreaseRound() {
         timerConfig.decrementRound();
+        isDirty = true;
         changeButtonStatus(displayRoundNumber, -1, 0);
     }
 
     public void increaseRest() {
         timerConfig.incrementRest();
+        isDirty = true;
         changeButtonStatus(displayRestNumber, 1, 0);
     }
 
@@ -76,11 +81,13 @@ public class MainTimerViewModel extends ViewModel {
 
     public void increaseNumRounds() {
         timerConfig.incrementRoundNum();
+        isDirty = true;
         changeButtonStatus(displayNumRoundsNumber, 1, 1);
     }
 
     public void decreaseNumRounds() {
         timerConfig.decrementRoundNum();
+        isDirty = true;
         changeButtonStatus(displayNumRoundsNumber, -1, 1);
     }
 
@@ -90,10 +97,19 @@ public class MainTimerViewModel extends ViewModel {
         display.setValue(value);
     }
 
+    public void updateTimerData() {
+        if(isDirty) {
+            timerRepo.updateTimerConfig(timerConfig);
+        }
+        isDirty = false;
+    }
+
     @Override
     protected void onCleared() {
-        //Log here
-        timerRepo.saveTimerConfig(timerConfig);
+        Timber.tag(TAG).i("Main View closed");
+        if(isDirty) {
+            timerRepo.updateTimerConfig(timerConfig);
+        }
     }
 
 }

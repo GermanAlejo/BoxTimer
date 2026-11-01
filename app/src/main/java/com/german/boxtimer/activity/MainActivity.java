@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     public <T>void openNewView(Button view, Class<T> targetClass) {
         Timber.tag(TAG).i("Loading new view");
         view.setOnClickListener(v -> {
+            mainTimerViewModel.updateTimerData();
             Intent intent = new Intent(MainActivity.this, targetClass);
             intent.putExtra("timerId", mainTimerViewModel.getTimerCurrentConfig().getUid());
             startActivity(intent);

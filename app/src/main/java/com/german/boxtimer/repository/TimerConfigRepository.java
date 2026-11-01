@@ -10,5 +10,5 @@ public interface TimerConfigRepository {
     TimerConfig findLast();
     void saveTimerConfig(TimerConfig timer);
     void deleteTimerConfig(TimerConfig timer);
-
+    void updateTimerConfig(TimerConfig timer);
 }
