@@ -2,6 +2,7 @@ package com.german.boxtimer.activity;
 
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -28,11 +29,20 @@ public class RunningTimerActivity extends AppCompatActivity {
 
         runningTimerViewModel = getRunningTimerViewModel();
 
+        //control Buttons
         Button startButton = findViewById(R.id.startButton);
         Button resetButton = findViewById(R.id.resetButton);
         Button pauseButton = findViewById(R.id.pauseButton);
-        TextView runningTimerText = findViewById(R.id.runningTimerText);
 
+        //timer texts
+        TextView runningTimerText = findViewById(R.id.runningTimerText);
+        TextView numRoundsTimerText = findViewById(R.id.roundTimerText);
+        TextView restTimerText = findViewById(R.id.rest_timer_left);
+        TextView totalTimeText = findViewById(R.id.total_time);
+        LinearLayout runningTimeContainer = findViewById(R.id.running_timer_container);
+        LinearLayout restTimeContainer = findViewById(R.id.rest_time_container);
+
+        //Button listeners
         resetButton.setOnClickListener(v -> {
             startButton.setVisibility(VISIBLE);
             pauseButton.setVisibility(GONE);
@@ -49,25 +59,37 @@ public class RunningTimerActivity extends AppCompatActivity {
             runningTimerViewModel.pause();
         });
 
-
         //Change the state when running
         runningTimerViewModel.isRunning().observe(this, isRunning -> startButton.setEnabled(!isRunning));
         runningTimerViewModel.isRunning().observe(this, pauseButton::setEnabled);
+        runningTimerViewModel.getTotalTimeText().observe(this, totalTimeText::setText);
         runningTimerViewModel.getDisplayTimeText().observe(this, runningTimerText::setText);
+        runningTimerViewModel.getNumRoundsLeftText().observe(this, numRoundsTimerText::setText);
+        runningTimerViewModel.getRestTimeLeftText().observe(this, restTimerText::setText);
+        //Observe rest
+        runningTimerViewModel.isResting().observe(this, isResting -> {
+            if (isResting) {
+                restTimeContainer.setVisibility(VISIBLE);
+                runningTimeContainer.setVisibility(GONE);
+            } else {
+                restTimeContainer.setVisibility(GONE);
+                runningTimeContainer.setVisibility(VISIBLE);
+            }
+        });
     }
 
     private RunningTimerViewModel getRunningTimerViewModel() {
         Timber.tag(TAG).i("Getting timer from main activity");
         long timerId = getIntent().getLongExtra("timerId", -1L);
         //Get the timer from db
-        if(timerId == -1) {
+        if (timerId == -1) {
             Timber.tag(TAG).e("Error - Invalid uid");
             throw new RuntimeException("Timer invalid");
         }
 
         TimerConfigRepository repo = ((TimerApp) getApplication()).getRepository();
 
-        AppViewModelFactory vmFactory =  new AppViewModelFactory(repo, timerId);
+        AppViewModelFactory vmFactory = new AppViewModelFactory(repo, timerId);
         return new ViewModelProvider(this, vmFactory).get(RunningTimerViewModel.class);
     }
 }

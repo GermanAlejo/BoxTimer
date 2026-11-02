@@ -11,17 +11,103 @@
             android:padding="24dp"
             android:background="@color/bg_dark">
 
-        <TextView
-                android:id="@+id/runningTimerText"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/timer_default"
-                android:textSize="72sp"
-                android:fontFamily="monospace"
-                android:textColor="@color/white"/>
+        <!-- Total Training time -->
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal">
+            <TextView android:id="@+id/total_time_text"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_gravity="center"
+                      android:text="@string/training_time_text"
+                      android:textSize="26sp"
+                      android:fontFamily="monospace"
+                      android:textColor="@color/white"/>
+            <TextView
+                    android:id="@+id/total_time"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/timer_default"
+                    android:textSize="52sp"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/white"/>
+        </LinearLayout>
+        <!-- Round Number -->
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal">
+            <TextView android:id="@+id/roundLeftTime"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_gravity="center"
+                      android:text="@string/rounds"
+                      android:textSize="20sp"
+                      android:fontFamily="monospace"
+                      android:textColor="@color/white"/>
+            <TextView
+                    android:id="@+id/roundTimerText"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/roundsLeftDefault"
+                    android:textSize="52sp"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/white"/>
+        </LinearLayout>
 
+        <!-- Rest timer by default hidden -->
+        <LinearLayout android:id="@+id/rest_time_container"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal"
+                      android:visibility="gone">
+            <TextView android:id="@+id/rest_time_left"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_gravity="center"
+                      android:text="@string/rest_left"
+                      android:textSize="20sp"
+                      android:fontFamily="monospace"
+                      android:textColor="@color/white"/>
+            <TextView
+                    android:id="@+id/rest_timer_left"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/timer_default"
+                    android:textSize="52sp"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/white"/>
+        </LinearLayout>
+
+        <!-- Time display -->
+        <LinearLayout android:id="@+id/running_timer_container"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal">
+            <TextView android:id="@+id/timeLeftText"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_gravity="center"
+                      android:text="@string/time_left"
+                      android:textSize="20sp"
+                      android:fontFamily="monospace"
+                      android:textColor="@color/white"/>
+            <TextView
+                    android:id="@+id/runningTimerText"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/timer_default"
+                    android:textSize="52sp"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/white"/>
+        </LinearLayout>
+
+        <!-- Control buttons -->
         <LinearLayout
+                style="?android:attr/buttonBarStyle"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -29,28 +115,31 @@
 
             <Button
                     android:id="@+id/startButton"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
                     android:text="@string/start"
-                    app:backgroundTint="@color/brand" />
+                    app:backgroundTint="@color/brand"/>
             <Button
                     android:id="@+id/pauseButton"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
                     android:text="@string/pause"
                     android:visibility="gone"
-                    app:backgroundTint="@color/brand" />
+                    app:backgroundTint="@color/brand"/>
 
             <Button
                     android:id="@+id/resetButton"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/reset" />
+                    android:text="@string/reset"/>
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
