@@ -10,6 +10,7 @@ import com.german.boxtimer.R;
 import com.german.boxtimer.TimerApp;
 import com.german.boxtimer.repository.TimerConfigRepository;
 import com.german.boxtimer.utils.AppViewModelFactory;
+import com.german.boxtimer.utils.TimeConstants;
 import com.german.boxtimer.viewModel.RunningTimerViewModel;
 import timber.log.Timber;
 
@@ -80,7 +81,7 @@ public class RunningTimerActivity extends AppCompatActivity {
 
     private RunningTimerViewModel getRunningTimerViewModel() {
         Timber.tag(TAG).i("Getting timer from main activity");
-        long timerId = getIntent().getLongExtra("timerId", -1L);
+        long timerId = getIntent().getLongExtra(TimeConstants.DEFAULT_TIMER_ID, -1L);
         //Get the timer from db
         if (timerId == -1) {
             Timber.tag(TAG).e("Error - Invalid uid");

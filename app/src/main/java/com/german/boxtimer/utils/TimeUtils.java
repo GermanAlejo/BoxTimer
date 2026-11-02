@@ -1,5 +1,7 @@
 package com.german.boxtimer.utils;
 
+import com.german.boxtimer.entity.timer.TimeSpan;
+
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -13,9 +15,9 @@ public class TimeUtils {
      * @param numRounds total of rounds of training in int
      * @return total training considering all rounds with rest time included in Milliseconds
      */
-    public static Long totalTimeMillis(Integer roundTime, Integer restTime, Integer numRounds) {
-        Long totalRound = toMillis(roundTime) * numRounds;
-        Long totalRest = toMillis(restTime) * numRounds;
+    public static Long totalTimeMillis(TimeSpan roundTime, TimeSpan restTime, Integer numRounds) {
+        Long totalRound = roundTime.calculateMillis() * numRounds;
+        Long totalRest = restTime.calculateMillis() * numRounds;
         return totalRest + totalRound;
     }
 
@@ -27,6 +29,17 @@ public class TimeUtils {
      */
     public static Long toMillis(Integer minutes) {
         return TimeUnit.MINUTES.toMillis(minutes);
+    }
+
+    /**
+     * return minutes and seconds in millis
+     *
+     * @param minutes Integer value of minutes
+     * @param seconds Integer value of seconds
+     * @return Long millis of total time
+     */
+    public static Long toMillis(Integer minutes, Integer seconds) {
+        return TimeUnit.SECONDS.toMillis(seconds) + toMillis(minutes);
     }
 
     /**

@@ -2,6 +2,7 @@ package com.german.boxtimer.repository;
 
 import com.german.boxtimer.dao.TimerDao;
 import com.german.boxtimer.entity.timer.TimerConfig;
+import com.german.boxtimer.entity.timer.TimeSpan;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,7 +20,13 @@ public class TimerConfigRepositoryImpl implements TimerConfigRepository {
             TimerConfig config = timerDao.findLast(); // plain DAO method
             if (config == null) {
                 //create new
-                config = new TimerConfig("Timer MMA", 3, 1, 3);
+                TimeSpan round = new TimeSpan(3, 0);
+                TimeSpan rest = new TimeSpan(1, 0);
+                //asume no seconds
+                int totalMin = round.getMinutes() + rest.getMinutes();
+                TimeSpan total = new TimeSpan(totalMin, 0);
+                config = new TimerConfig("Timer MMA", round, rest, total, 3);
+                timerDao.insert(config);
             }
             callback.accept(config);   // runs on the background thread
         });

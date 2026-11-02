@@ -1,7 +1,9 @@
 package com.german.boxtimer.entity.timer;
 
+import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import com.german.boxtimer.utils.TimeConstants;
 
 import java.time.Instant;
 
@@ -11,9 +13,12 @@ public class TimerConfig {
     @PrimaryKey(autoGenerate = true)
     private Long uid;
     private String name;
-    private Integer roundDuration;
-    private Integer restDuration;
-    private Integer totalTimerDuration;
+    @Embedded(prefix = "round_")
+    private TimeSpan roundTimer;
+    @Embedded(prefix = "rest_")
+    private TimeSpan restTimer;
+    @Embedded(prefix = "total_")
+    private TimeSpan totalTime;
     //private sound
     //private boolean repeats;
     private Integer rounds;
@@ -23,39 +28,24 @@ public class TimerConfig {
         this.createdAt = Instant.now();
     }
 
-    public TimerConfig(String name, Integer roundDuration, Integer restDuration, Integer rounds) {
+    public TimerConfig(String name, TimeSpan roundTimer, TimeSpan restTimer, TimeSpan totalTime,
+                        Integer rounds) {
         this.name = name;
-        this.roundDuration = roundDuration;
-        this.restDuration = restDuration;
+        this.roundTimer = roundTimer;
+        this.restTimer = restTimer;
         this.rounds = rounds;
         this.createdAt = Instant.now();
-        this.totalTimerDuration = rounds * roundDuration + rounds- restDuration;
     }
 
     //Helper methods
-    //TODO: Maybe do check here
-    public void incrementRound() {
-        roundDuration++;
-    }
-
-    public void decrementRound() {
-        roundDuration--;
-    }
-
-    public void incrementRest() {
-        restDuration++;
-    }
-
-    public void decrementRest() {
-        restDuration--;
-    }
-
     public void incrementRoundNum() {
         rounds++;
     }
 
     public void decrementRoundNum() {
-        rounds--;
+        if(rounds - TimeConstants.MAX_MINUTES_CHANGE > 0) {
+            rounds--;
+        }
     }
 
     public Long getUid() {
@@ -74,31 +64,6 @@ public class TimerConfig {
         this.name = name;
     }
 
-    public Integer getRoundDuration() {
-        return roundDuration;
-    }
-
-    public void setRoundDuration(Integer roundDuration) {
-        this.roundDuration = roundDuration;
-    }
-
-    public Integer getRestDuration() {
-        return restDuration;
-    }
-
-    public void setRestDuration(Integer restDuration) {
-        this.restDuration = restDuration;
-    }
-
-
-    public Integer getTotalTimerDuration() {
-        return totalTimerDuration;
-    }
-
-    public void setTotalTimerDuration(Integer totalTimerDuration) {
-        this.totalTimerDuration = totalTimerDuration;
-    }
-
     //public boolean isRepeats() {
     //    return repeats;
     //}
@@ -106,6 +71,31 @@ public class TimerConfig {
     //public void setRepeats(boolean repeats) {
     //    this.repeats = repeats;
     //}
+
+
+    public TimeSpan getRoundTimer() {
+        return roundTimer;
+    }
+
+    public void setRoundTimer(TimeSpan roundTimer) {
+        this.roundTimer = roundTimer;
+    }
+
+    public TimeSpan getRestTimer() {
+        return restTimer;
+    }
+
+    public void setRestTimer(TimeSpan restTimer) {
+        this.restTimer = restTimer;
+    }
+
+    public TimeSpan getTotalTime() {
+        return totalTime;
+    }
+
+    public void setTotalTime(TimeSpan totalTime) {
+        this.totalTime = totalTime;
+    }
 
     public Integer getRounds() {
         return rounds;

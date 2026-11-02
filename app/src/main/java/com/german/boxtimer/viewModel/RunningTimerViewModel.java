@@ -3,17 +3,15 @@ package com.german.boxtimer.viewModel;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.widget.TextView;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.german.boxtimer.entity.timer.TimerConfig;
 import com.german.boxtimer.repository.TimerConfigRepository;
+import com.german.boxtimer.utils.TimeConstants;
 import com.german.boxtimer.utils.TimeUtils;
-import kotlin.time.TimeMark;
 import timber.log.Timber;
 
-import java.util.Locale;
 
 import static com.german.boxtimer.utils.TimeUtils.format;
 import static com.german.boxtimer.utils.TimeUtils.formatNumRounds;
@@ -49,13 +47,13 @@ public class RunningTimerViewModel extends ViewModel {
     }
 
     private void initializeDisplayData() {
-        restEndTimeMillis = TimeUtils.toMillis(timerConfig.getRestDuration());
-        endTimeMillis = TimeUtils.toMillis(timerConfig.getRoundDuration());
+        restEndTimeMillis = timerConfig.getRestTimer().calculateMillis();
+        endTimeMillis = timerConfig.getRoundTimer().calculateMillis();
         roundNumber = timerConfig.getRounds();
         String time = TimeUtils.format(endTimeMillis);
         runningTimerText.postValue(time);
         numRoundsLeftText.postValue(TimeUtils.formatNumRounds(1, roundNumber));
-        Long totalTime = TimeUtils.totalTimeMillis(timerConfig.getRoundDuration(), timerConfig.getRestDuration(), timerConfig.getRounds());
+        Long totalTime = TimeUtils.totalTimeMillis(timerConfig.getRoundTimer(), timerConfig.getRestTimer(), timerConfig.getRounds());
         totalTimeText.postValue(TimeUtils.format(totalTime));
     }
 
@@ -80,7 +78,7 @@ public class RunningTimerViewModel extends ViewModel {
                 //End training
                 if(roundNumber <= 0) {
                     Timber.tag(TAG).i("Training ended");
-                    runningTimerText.setValue("00:00");
+                    runningTimerText.setValue(TimeConstants.MIN_MINUTES_TEXT);
                     numRoundsLeftText.setValue(formatNumRounds(roundNumber, timerConfig.getRounds()));
                     running.setValue(false);
                     resting.setValue(false);
@@ -90,11 +88,11 @@ public class RunningTimerViewModel extends ViewModel {
                 //End round
                 Timber.tag(TAG).i("Round ended");
                 if(Boolean.TRUE.equals(isResting().getValue())) {
-                    endTimeMillis = SystemClock.elapsedRealtime() + TimeUtils.toMillis(timerConfig.getRoundDuration());
+                    endTimeMillis = SystemClock.elapsedRealtime() + timerConfig.getRoundTimer().calculateMillis();
                     resting.setValue(false);
                 } else {
                     //recalculate round time and rest time
-                    restEndTimeMillis = SystemClock.elapsedRealtime() + TimeUtils.toMillis(timerConfig.getRestDuration());
+                    restEndTimeMillis = SystemClock.elapsedRealtime() + timerConfig.getRestTimer().calculateMillis();
                     //reset
                     numRoundsLeftText.setValue(formatNumRounds(roundNumber, timerConfig.getRounds()));
                     resting.setValue(true);
@@ -114,7 +112,7 @@ public class RunningTimerViewModel extends ViewModel {
         //If pause we don't want to recalculate the time
         if(!isPaused) {
             //save future date (finish date) we calculate agains that
-            endTimeMillis = SystemClock.elapsedRealtime() + TimeUtils.toMillis(timerConfig.getRoundDuration());
+            endTimeMillis = SystemClock.elapsedRealtime() + timerConfig.getRoundTimer().calculateMillis();
         } else {
             endTimeMillis = SystemClock.elapsedRealtime() + pauseTimeMillis;
         }
@@ -125,7 +123,7 @@ public class RunningTimerViewModel extends ViewModel {
     public void reset() {
         handler.removeCallbacks(tickTimerTask);
         running.setValue(false);
-        runningTimerText.setValue(format(TimeUtils.toMillis(timerConfig.getRoundDuration())));
+        runningTimerText.setValue(timerConfig.getRoundTimer().toString());
     }
 
     public void pause() {

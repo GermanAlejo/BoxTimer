@@ -5,15 +5,16 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.german.boxtimer.entity.timer.TimerConfig;
 import com.german.boxtimer.repository.TimerConfigRepository;
+import com.german.boxtimer.entity.timer.TimeSpan;
 import timber.log.Timber;
 
 
 public class MainTimerViewModel extends ViewModel {
     private static final String TAG = "MainTimerVM";
     private final TimerConfigRepository timerRepo;
-    private final MutableLiveData<Integer> displayRoundNumber = new MutableLiveData<>();
-    private final MutableLiveData<Integer> displayRestNumber = new MutableLiveData<>();
-    private final MutableLiveData<Integer> displayNumRoundsNumber = new MutableLiveData<>();
+    private final MutableLiveData<String> displayRoundNumber = new MutableLiveData<>();
+    private final MutableLiveData<String> displayRestNumber = new MutableLiveData<>();
+    private final MutableLiveData<String> displayNumRoundsNumber = new MutableLiveData<>();
     private TimerConfig timerConfig;
     //Flag to control if the config was changed
     private boolean isDirty = false;
@@ -32,9 +33,9 @@ public class MainTimerViewModel extends ViewModel {
 
     // function to initialize display elements
     private void initializeDisplayData() {
-        displayRoundNumber.postValue(timerConfig.getRoundDuration());
-        displayRestNumber.postValue(timerConfig.getRestDuration());
-        displayNumRoundsNumber.postValue(timerConfig.getRounds());
+        displayRoundNumber.postValue(timerConfig.getRoundTimer().toString());
+        displayRestNumber.postValue(timerConfig.getRoundTimer().toString());
+        displayNumRoundsNumber.postValue(timerConfig.getRounds().toString());
     }
 
     // Exposed read-only: the Activity can observe but not change the values
@@ -45,60 +46,64 @@ public class MainTimerViewModel extends ViewModel {
     }
 
     //get display values
-    public LiveData<Integer> getRoundTime() {
+    public LiveData<String> getRoundTime() {
         return displayRoundNumber;
     }
-    public LiveData<Integer> getRestTime() {
+    public LiveData<String> getRestTime() {
         return displayRestNumber;
     }
-
-    public LiveData<Integer> getNumRounds() {
+    public LiveData<String> getNumRounds() {
         return displayNumRoundsNumber;
     }
 
     public void increaseRound() {
-        timerConfig.incrementRound();
+        TimeSpan roundTimer = timerConfig.getRoundTimer();
+        roundTimer.incrementSeconds();
         isDirty = true;
-        changeButtonStatus(displayRoundNumber, 1, 1);
+        changeButtonStatus(displayRoundNumber, roundTimer.toString());
     }
 
     public void decreaseRound() {
-        timerConfig.decrementRound();
+        TimeSpan roundTimer = timerConfig.getRoundTimer();
+        roundTimer.decrementSeconds();
         isDirty = true;
-        changeButtonStatus(displayRoundNumber, -1, 0);
+        changeButtonStatus(displayRoundNumber, roundTimer.toString());
     }
 
     public void increaseRest() {
-        timerConfig.incrementRest();
+        TimeSpan restTimer = timerConfig.getRestTimer();
+        restTimer.incrementSeconds();
         isDirty = true;
-        changeButtonStatus(displayRestNumber, 1, 0);
+        changeButtonStatus(displayRestNumber, restTimer.toString());
     }
 
     public void decreaseRest() {
-        timerConfig.decrementRest();
-        changeButtonStatus(displayRestNumber, -1, 1);
+        TimeSpan restTimer = timerConfig.getRestTimer();
+        restTimer.decrementSeconds();
+        isDirty = true;
+        changeButtonStatus(displayRestNumber, restTimer.toString());
     }
 
     public void increaseNumRounds() {
         timerConfig.incrementRoundNum();
         isDirty = true;
-        changeButtonStatus(displayNumRoundsNumber, 1, 1);
+        changeButtonStatus(displayNumRoundsNumber, timerConfig.getRounds().toString());
     }
 
     public void decreaseNumRounds() {
         timerConfig.decrementRoundNum();
         isDirty = true;
-        changeButtonStatus(displayNumRoundsNumber, -1, 1);
+        changeButtonStatus(displayNumRoundsNumber, timerConfig.getRounds().toString());
     }
 
-    private void changeButtonStatus(MutableLiveData<Integer> display, Integer change, Integer minVal) {
-        Integer currentValue = display.getValue();
-        Integer value = (currentValue == null ? minVal : currentValue) + change;
+    private void changeButtonStatus(MutableLiveData<String> display, String value) {
         display.setValue(value);
     }
 
     public void updateTimerData() {
         if(isDirty) {
+            //TODO ensure we update total time
+            //timerConfig.setTotalTime();
             timerRepo.updateTimerConfig(timerConfig);
         }
         isDirty = false;

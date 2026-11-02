@@ -12,6 +12,7 @@ import com.german.boxtimer.R;
 import com.german.boxtimer.TimerApp;
 import com.german.boxtimer.repository.TimerConfigRepository;
 import com.german.boxtimer.utils.AppViewModelFactory;
+import com.german.boxtimer.utils.TimeConstants;
 import com.german.boxtimer.viewModel.MainTimerViewModel;
 import timber.log.Timber;
 
@@ -64,16 +65,16 @@ public class MainActivity extends AppCompatActivity {
         view.setOnClickListener(v -> {
             mainTimerViewModel.updateTimerData();
             Intent intent = new Intent(MainActivity.this, targetClass);
-            intent.putExtra("timerId", mainTimerViewModel.getTimerCurrentConfig().getUid());
+            intent.putExtra(TimeConstants.DEFAULT_TIMER_ID, mainTimerViewModel.getTimerCurrentConfig().getUid());
             startActivity(intent);
         });
     }
 
-    private void bindControl(View control, TextView textView, LiveData<Integer> dataValue, Runnable moreFunc, Runnable lessFunc) {
+    private void bindControl(View control, TextView textView, LiveData<String> dataValue, Runnable moreFunc, Runnable lessFunc) {
         control.findViewById(R.id.more_button).setOnClickListener(v -> moreFunc.run());
         control.findViewById(R.id.less_button).setOnClickListener(v -> lessFunc.run());
 
-        dataValue.observe(this, number -> textView.setText(String.valueOf(number)));
+        dataValue.observe(this, textView::setText);
     }
 
     private MainTimerViewModel getMainTimerViewModel() {
