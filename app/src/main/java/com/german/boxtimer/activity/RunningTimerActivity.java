@@ -45,8 +45,14 @@ public class RunningTimerActivity extends AppCompatActivity {
 
         //Button listeners
         resetButton.setOnClickListener(v -> {
+            //buttons
             startButton.setVisibility(VISIBLE);
             pauseButton.setVisibility(GONE);
+            //text
+            restTimeContainer.setVisibility(GONE);
+            runningTimeContainer.setVisibility(VISIBLE);
+
+            //Reset data
             runningTimerViewModel.reset();
         });
         startButton.setOnClickListener(v -> {

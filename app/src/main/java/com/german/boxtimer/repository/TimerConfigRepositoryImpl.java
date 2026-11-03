@@ -3,12 +3,15 @@ package com.german.boxtimer.repository;
 import com.german.boxtimer.dao.TimerDao;
 import com.german.boxtimer.entity.timer.TimerConfig;
 import com.german.boxtimer.entity.timer.TimeSpan;
+import timber.log.Timber;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class TimerConfigRepositoryImpl implements TimerConfigRepository {
+
+    private static final String TAG = "TimerConfigRepository";
 
     private final TimerDao timerDao;
     private final ExecutorService executor;
@@ -17,8 +20,10 @@ public class TimerConfigRepositoryImpl implements TimerConfigRepository {
     @Override
     public void loadInitial(Consumer<TimerConfig> callback) {
         executor.execute(() -> {
+            Timber.tag(TAG).i("Searching for timer");
             TimerConfig config = timerDao.findLast(); // plain DAO method
             if (config == null) {
+                Timber.tag(TAG).i("Timer not found, creating new one...");
                 //create new
                 TimeSpan round = new TimeSpan(3, 0);
                 TimeSpan rest = new TimeSpan(1, 0);
