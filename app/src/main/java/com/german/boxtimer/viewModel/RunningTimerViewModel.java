@@ -25,6 +25,7 @@ public class RunningTimerViewModel extends ViewModel {
     private final MutableLiveData<String> runningTimerText = new MutableLiveData<>();
     private final MutableLiveData<String> numRoundsLeftText = new MutableLiveData<>();
     private final MutableLiveData<String> restTimeLeftText = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> ended = new MutableLiveData<>(false);
     private final Handler handler = new Handler(Looper.getMainLooper());
     private TimerConfig timerConfig;
     private boolean isPaused = false;
@@ -75,7 +76,7 @@ public class RunningTimerViewModel extends ViewModel {
             //check whether we are counting round or rest
             long remaining;
             MutableLiveData<String> timeText;
-            if(Boolean.TRUE.equals(isResting().getValue())) {
+            if (Boolean.TRUE.equals(isResting().getValue())) {
                 remaining = restEndTimeMillis - SystemClock.elapsedRealtime();
                 timeText = restTimeLeftText;
             } else {
@@ -86,52 +87,35 @@ public class RunningTimerViewModel extends ViewModel {
 
             // check if round finished
             if (remaining <= 0) {
-                if(Boolean.TRUE.equals(isResting().getValue()) || currentRound == roundNumber) {
+                if (Boolean.TRUE.equals(isResting().getValue()) || currentRound == roundNumber) {
                     currentRound++;
                 }
                 //End training
-                if(currentRound > roundNumber) {
-                    Timber.tag(TAG).i("Training ended");
-                    runningTimerText.setValue(TimeConstants.MIN_MINUTES_TEXT);
-                    numRoundsLeftText.setValue(formatNumRounds(timerConfig.getRounds(), timerConfig.getRounds()));
-                    running.setValue(false);
-                    resting.setValue(false);
+                if (currentRound > roundNumber) {
+                    endTraining();
                     return; // stop ticking
                 }
-
                 //End round
-                Timber.tag(TAG).i("Round ended");
-                if(Boolean.TRUE.equals(isResting().getValue())) {
-                    endTimeMillis = SystemClock.elapsedRealtime() + timerConfig.getRoundTimer().calculateMillis();
-                    resting.setValue(false);
-                    numRoundsLeftText.setValue(formatNumRounds(currentRound, timerConfig.getRounds()));
-                } else {
-                    //recalculate round time and rest time
-                    restEndTimeMillis = SystemClock.elapsedRealtime() + timerConfig.getRestTimer().calculateMillis();
-                    //reset
-                    resting.setValue(true);
-                }
+                endRound();
             }
             timeText.setValue(format(remaining));
             handler.postDelayed(this, 100);   // schedule the next tick
         }
     };
 
-    public LiveData<Boolean> isRunning() { return running; }
-    public LiveData<Boolean> isResting() { return resting; }
-
     public void start() {
         if (timerConfig == null) return;   // not loaded yet
         if (Boolean.TRUE.equals(running.getValue())) return;
         //If pause we don't want to recalculate the time
-        if(isPaused) {
-            if(Boolean.TRUE.equals(isResting().getValue())) {
+        if (isPaused) {
+            if (Boolean.TRUE.equals(isResting().getValue())) {
                 restEndTimeMillis = SystemClock.elapsedRealtime() + pauseTimeMillis;
             } else {
                 endTimeMillis = SystemClock.elapsedRealtime() + pauseTimeMillis;
             }
         }
         running.setValue(true);
+        ended.setValue(false);
         handler.post(tickTimerTask);
     }
 
@@ -139,19 +123,32 @@ public class RunningTimerViewModel extends ViewModel {
         handler.removeCallbacks(tickTimerTask);
         running.setValue(false);
         resting.setValue(false);
+        ended.setValue(false);
         isPaused = false;
         initializeDisplayData();
     }
 
     public void pause() {
         isPaused = true;
-        if(Boolean.TRUE.equals(isResting().getValue())) {
+        if (Boolean.TRUE.equals(isResting().getValue())) {
             pauseTimeMillis = restEndTimeMillis - SystemClock.elapsedRealtime();
         } else {
             pauseTimeMillis = endTimeMillis - SystemClock.elapsedRealtime();
         }
         handler.removeCallbacks(tickTimerTask);
         running.setValue(false);
+    }
+
+    public LiveData<Boolean> isRunning() {
+        return running;
+    }
+
+    public LiveData<Boolean> isResting() {
+        return resting;
+    }
+
+    public LiveData<Boolean> isEnded() {
+        return ended;
     }
 
     public LiveData<String> getTotalTimeText() {
@@ -168,6 +165,29 @@ public class RunningTimerViewModel extends ViewModel {
 
     public LiveData<String> getRestTimeLeftText() {
         return restTimeLeftText;
+    }
+
+    //Helper methods
+    private void endRound() {
+        Timber.tag(TAG).i("Round %d ended", currentRound);
+        if (Boolean.TRUE.equals(isResting().getValue())) {
+            endTimeMillis = SystemClock.elapsedRealtime() + timerConfig.getRoundTimer().calculateMillis();
+            resting.setValue(false);
+            numRoundsLeftText.setValue(formatNumRounds(currentRound, timerConfig.getRounds()));
+        } else {
+            //recalculate round time and rest time
+            restEndTimeMillis = SystemClock.elapsedRealtime() + timerConfig.getRestTimer().calculateMillis();
+            //reset
+            resting.setValue(true);
+        }
+    }
+
+    private void endTraining() {
+        Timber.tag(TAG).i("Training ended");
+        runningTimerText.setValue(TimeConstants.MIN_MINUTES_TEXT);
+        numRoundsLeftText.setValue(formatNumRounds(timerConfig.getRounds(), timerConfig.getRounds()));
+        running.setValue(false);
+        resting.setValue(false);
     }
 
     @Override

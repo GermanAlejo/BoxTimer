@@ -83,6 +83,16 @@ public class RunningTimerActivity extends AppCompatActivity {
                 runningTimeContainer.setVisibility(VISIBLE);
             }
         });
+        //ending events
+        runningTimerViewModel.isEnded().observe(this, isEnded -> {
+            if (isEnded) {
+                startButton.setVisibility(VISIBLE);
+                startButton.setEnabled(false);
+                pauseButton.setVisibility(GONE);
+                runningTimeContainer.setVisibility(VISIBLE);
+                restTimeContainer.setVisibility(GONE);
+            }
+        });
     }
 
     private RunningTimerViewModel getRunningTimerViewModel() {
