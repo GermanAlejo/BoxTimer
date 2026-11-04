@@ -9,7 +9,7 @@
             android:layout_height="match_parent"
             android:gravity="top"
             android:padding="24dp"
-            android:background="@color/bg_dark">
+            android:background="@color/black">
 
         <!-- Total Training time -->
         <LinearLayout android:layout_width="wrap_content"
@@ -120,7 +120,8 @@
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
                     android:text="@string/start"
-                    app:backgroundTint="@color/brand"/>
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/purple"/>
             <Button android:id="@+id/pause_button"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
@@ -129,13 +130,16 @@
                     android:layout_marginEnd="8dp"
                     android:text="@string/pause"
                     android:visibility="gone"
-                    app:backgroundTint="@color/brand"/>
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/yellow"/>
 
             <Button android:id="@+id/reset_button"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:background="@color/red"
                     android:text="@string/reset"/>
         </LinearLayout>
     </LinearLayout>

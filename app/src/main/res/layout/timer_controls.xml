@@ -10,13 +10,13 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/more_icon"
-            android:background="@android:color/holo_blue_bright"
-            android:contentDescription="@string/icon_mas_text" />
+            android:background="@color/dark_purple"
+            android:contentDescription="@string/icon_mas_text"/>
     <ImageButton
             android:id="@+id/less_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/less_icon"
-            android:background="@android:color/holo_blue_bright"
-            android:contentDescription="@string/icon_menos_text" />
+            android:background="@color/fuchsia"
+            android:contentDescription="@string/icon_menos_text"/>
 </LinearLayout>
