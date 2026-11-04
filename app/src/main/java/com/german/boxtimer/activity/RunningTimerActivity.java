@@ -9,7 +9,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.german.boxtimer.R;
 import com.german.boxtimer.TimerApp;
 import com.german.boxtimer.repository.TimerConfigRepository;
+import com.german.boxtimer.sound.SoundEffects;
 import com.german.boxtimer.utils.AppViewModelFactory;
+import com.german.boxtimer.sound.SoundPlayer;
 import com.german.boxtimer.utils.TimeConstants;
 import com.german.boxtimer.viewModel.RunningTimerViewModel;
 import timber.log.Timber;
@@ -106,7 +108,10 @@ public class RunningTimerActivity extends AppCompatActivity {
 
         TimerConfigRepository repo = ((TimerApp) getApplication()).getRepository();
 
-        AppViewModelFactory vmFactory = new AppViewModelFactory(repo, timerId);
+        //Set up sound player
+        SoundEffects soundPlayer = new SoundPlayer(this);
+
+        AppViewModelFactory vmFactory = new AppViewModelFactory(repo, timerId, soundPlayer);
         return new ViewModelProvider(this, vmFactory).get(RunningTimerViewModel.class);
     }
 }

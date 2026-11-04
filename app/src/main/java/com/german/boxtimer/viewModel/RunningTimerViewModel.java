@@ -6,8 +6,10 @@ import android.os.SystemClock;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.german.boxtimer.domain.TimerEngine;
 import com.german.boxtimer.entity.timer.TimerConfig;
 import com.german.boxtimer.repository.TimerConfigRepository;
+import com.german.boxtimer.sound.SoundEffects;
 import com.german.boxtimer.utils.TimeConstants;
 import com.german.boxtimer.utils.TimeUtils;
 import timber.log.Timber;
@@ -27,6 +29,7 @@ public class RunningTimerViewModel extends ViewModel {
     private final MutableLiveData<String> restTimeLeftText = new MutableLiveData<>();
     private final MutableLiveData<Boolean> ended = new MutableLiveData<>(false);
     private final Handler handler = new Handler(Looper.getMainLooper());
+    private final TimerEngine timerEngine;
     private TimerConfig timerConfig;
     private boolean isPaused = false;
     private long pauseTimeMillis;
@@ -35,7 +38,7 @@ public class RunningTimerViewModel extends ViewModel {
     private int roundNumber;
     private int currentRound;
 
-    public RunningTimerViewModel(TimerConfigRepository repo, Long timerId) {
+    public RunningTimerViewModel(TimerConfigRepository repo, Long timerId, SoundEffects soundEffects) {
         Timber.tag(TAG).i("Creating Running timer VM");
         repo.getTimerConfigById(timerId, loaded -> {
             if (loaded == null) {
@@ -45,6 +48,8 @@ public class RunningTimerViewModel extends ViewModel {
             timerConfig = loaded;
             initializeDisplayData();
         });
+        //Initialize domain engine
+        timerEngine = new TimerEngine(timerConfig, soundEffects);
     }
 
     private void initializeDisplayData() {
@@ -93,6 +98,7 @@ public class RunningTimerViewModel extends ViewModel {
                 //End training
                 if (currentRound > roundNumber) {
                     endTraining();
+                    timerEngine.playFinalBell();
                     return; // stop ticking
                 }
                 //End round
@@ -105,13 +111,19 @@ public class RunningTimerViewModel extends ViewModel {
 
     public void start() {
         if (timerConfig == null) return;   // not loaded yet
-        if (Boolean.TRUE.equals(running.getValue())) return;
+        if (Boolean.TRUE.equals(running.getValue())) {
+            return;
+        }
+        if(Boolean.FALSE.equals(isResting().getValue())){
+            timerEngine.playSingleBell();
+        }
         //If pause we don't want to recalculate the time
         if (isPaused) {
             if (Boolean.TRUE.equals(isResting().getValue())) {
                 restEndTimeMillis = SystemClock.elapsedRealtime() + pauseTimeMillis;
             } else {
                 endTimeMillis = SystemClock.elapsedRealtime() + pauseTimeMillis;
+                timerEngine.playSingleBell();
             }
         }
         running.setValue(true);
@@ -174,11 +186,13 @@ public class RunningTimerViewModel extends ViewModel {
             endTimeMillis = SystemClock.elapsedRealtime() + timerConfig.getRoundTimer().calculateMillis();
             resting.setValue(false);
             numRoundsLeftText.setValue(formatNumRounds(currentRound, timerConfig.getRounds()));
+            timerEngine.playSingleBell();
         } else {
             //recalculate round time and rest time
             restEndTimeMillis = SystemClock.elapsedRealtime() + timerConfig.getRestTimer().calculateMillis();
             //reset
             resting.setValue(true);
+            timerEngine.playBell();
         }
     }
 
@@ -188,11 +202,13 @@ public class RunningTimerViewModel extends ViewModel {
         numRoundsLeftText.setValue(formatNumRounds(timerConfig.getRounds(), timerConfig.getRounds()));
         running.setValue(false);
         resting.setValue(false);
+        timerEngine.playFinalBell();
     }
 
     @Override
     protected void onCleared() {
         handler.removeCallbacks(tickTimerTask);   // screen is gone for good: stop ticking
+        timerEngine.clearEngine();
     }
 
 }
