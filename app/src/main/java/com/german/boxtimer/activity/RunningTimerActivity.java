@@ -33,13 +33,13 @@ public class RunningTimerActivity extends AppCompatActivity {
         runningTimerViewModel = getRunningTimerViewModel();
 
         //control Buttons
-        Button startButton = findViewById(R.id.startButton);
-        Button resetButton = findViewById(R.id.resetButton);
-        Button pauseButton = findViewById(R.id.pauseButton);
+        Button startButton = findViewById(R.id.start_button);
+        Button resetButton = findViewById(R.id.reset_button);
+        Button pauseButton = findViewById(R.id.pause_button);
 
         //timer texts
-        TextView runningTimerText = findViewById(R.id.runningTimerText);
-        TextView numRoundsTimerText = findViewById(R.id.roundTimerText);
+        TextView runningTimerText = findViewById(R.id.time_left);
+        TextView numRoundsTimerText = findViewById(R.id.rounds_left);
         TextView restTimerText = findViewById(R.id.rest_timer_left);
         TextView totalTimeText = findViewById(R.id.total_time);
         LinearLayout runningTimeContainer = findViewById(R.id.running_timer_container);

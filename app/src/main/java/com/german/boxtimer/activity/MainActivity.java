@@ -36,12 +36,12 @@ public class MainActivity extends AppCompatActivity {
         View numberControlView = findViewById(R.id.control_number_rounds);
 
         //Button to start timer
-        Button startButton = findViewById(R.id.startButton);
+        Button startButton = findViewById(R.id.start_button);
 
         //Get view text to change
-        TextView roundTimeText = findViewById(R.id.timeText);
+        TextView roundTimeText = findViewById(R.id.time_text);
         TextView restTimeText = findViewById(R.id.rest_time);
-        TextView numRoundsText = findViewById(R.id.numRounds);
+        TextView numRoundsText = findViewById(R.id.num_rounds);
 
         // 2. Observe state: whenever the ViewModel's value changes, update the screen
 
