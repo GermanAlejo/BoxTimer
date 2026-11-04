@@ -63,6 +63,7 @@
                     android:textColor="@color/white"/>
             <!-- + - Buttons -->
             <include android:id="@+id/control_rest"
+                     style="@style/MainColumnStyle"
                      layout="@layout/timer_controls"/>
         </LinearLayout>
         <LinearLayout style="@style/MainColumnContainerStyle">
@@ -82,6 +83,7 @@
                     android:textColor="@color/white"/>
             <!-- + - Buttons -->
             <include android:id="@+id/control_number_rounds"
+                     style="@style/MainColumnStyle"
                      layout="@layout/timer_controls"/>
         </LinearLayout>
 
