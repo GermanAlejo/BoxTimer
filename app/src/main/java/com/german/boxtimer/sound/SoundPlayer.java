@@ -32,8 +32,8 @@ public class SoundPlayer implements SoundEffects {
         //Build sound player
         soundPool = builder.build();
         //Load bell sounds
-        bellId = soundPool.load(context, R.raw.boxing_bell, 1);
-        singleBellId = soundPool.load(context, R.raw.boxing_bell_single, 1);
+        bellId = soundPool.load(context, R.raw.bell_effect, 1);
+        singleBellId = soundPool.load(context, R.raw.bell_single_effect, 1);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class SoundPlayer implements SoundEffects {
     @Override
     public void playFinalBell() {
         Timber.tag(TAG).i("Playing final bell");
-        int streamId = soundPool.play(bellId, 0.5f, 0.5f, 0, 0,2f);
+        int streamId = soundPool.play(bellId, 0.5f, 0.5f, 0, 2,1.5f);
         soundPool.setLoop(streamId, 1);
         if(streamId == 0) {
             Timber.tag(TAG).e("Could not play sound");
