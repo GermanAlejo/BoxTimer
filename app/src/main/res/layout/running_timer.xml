@@ -11,28 +11,6 @@
             android:padding="24dp"
             android:background="@color/black">
 
-        <!-- Total Training time -->
-        <LinearLayout android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:orientation="horizontal">
-            <TextView android:id="@+id/total_time_text"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_gravity="center"
-                      android:text="@string/training_time_text"
-                      android:textSize="26sp"
-                      android:fontFamily="monospace"
-                      android:textColor="@color/white"/>
-            <TextView
-                    android:id="@+id/total_time"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/timer_default"
-                    android:textSize="52sp"
-                    android:fontFamily="monospace"
-                    android:textColor="@color/white"/>
-        </LinearLayout>
         <!-- Round Number -->
         <LinearLayout android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
@@ -110,11 +88,11 @@
                 style="?android:attr/buttonBarStyle"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
                 android:layout_marginTop="32dp">
 
             <Button android:id="@+id/start_button"
-                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -123,7 +101,6 @@
                     android:textColor="@color/white"
                     app:backgroundTint="@color/purple"/>
             <Button android:id="@+id/pause_button"
-                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -134,12 +111,11 @@
                     app:backgroundTint="@color/yellow"/>
 
             <Button android:id="@+id/reset_button"
-                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textColor="@color/white"
-                    android:background="@color/red"
+                    android:backgroundTint="@color/red"
                     android:text="@string/reset"/>
         </LinearLayout>
     </LinearLayout>

@@ -3,6 +3,7 @@ package com.german.boxtimer.repository;
 import com.german.boxtimer.dao.TimerDao;
 import com.german.boxtimer.entity.timer.TimerConfig;
 import com.german.boxtimer.entity.timer.TimeSpan;
+import com.german.boxtimer.utils.TimeUtils;
 import timber.log.Timber;
 
 import java.util.concurrent.ExecutorService;
@@ -28,9 +29,8 @@ public class TimerConfigRepositoryImpl implements TimerConfigRepository {
                 TimeSpan round = new TimeSpan(3, 0);
                 TimeSpan rest = new TimeSpan(1, 0);
                 //asume no seconds
-                int totalMin = round.getMinutes() + rest.getMinutes();
-                TimeSpan total = new TimeSpan(totalMin, 0);
-                config = new TimerConfig("Timer MMA", round, rest, total, 3);
+                Long totalMin = TimeUtils.toMillis(round.getMinutes() + rest.getMinutes());
+                config = new TimerConfig("Timer MMA", round, rest, totalMin, 3);
                 timerDao.insert(config);
             }
             callback.accept(config);   // runs on the background thread

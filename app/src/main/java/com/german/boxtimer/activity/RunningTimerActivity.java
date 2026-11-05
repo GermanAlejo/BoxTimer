@@ -20,7 +20,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 public class RunningTimerActivity extends AppCompatActivity {
-
     private static final String TAG = "RunningTimerActivity";
     private RunningTimerViewModel runningTimerViewModel;
 
@@ -41,7 +40,6 @@ public class RunningTimerActivity extends AppCompatActivity {
         TextView runningTimerText = findViewById(R.id.time_left);
         TextView numRoundsTimerText = findViewById(R.id.rounds_left);
         TextView restTimerText = findViewById(R.id.rest_timer_left);
-        TextView totalTimeText = findViewById(R.id.total_time);
         LinearLayout runningTimeContainer = findViewById(R.id.running_timer_container);
         LinearLayout restTimeContainer = findViewById(R.id.rest_time_container);
 
@@ -71,7 +69,6 @@ public class RunningTimerActivity extends AppCompatActivity {
         //Change the state when running
         runningTimerViewModel.isRunning().observe(this, isRunning -> startButton.setEnabled(!isRunning));
         runningTimerViewModel.isRunning().observe(this, pauseButton::setEnabled);
-        runningTimerViewModel.getTotalTimeText().observe(this, totalTimeText::setText);
         runningTimerViewModel.getDisplayTimeText().observe(this, runningTimerText::setText);
         runningTimerViewModel.getNumRoundsLeftText().observe(this, numRoundsTimerText::setText);
         runningTimerViewModel.getRestTimeLeftText().observe(this, restTimerText::setText);

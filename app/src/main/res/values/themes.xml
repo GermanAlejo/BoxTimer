@@ -3,7 +3,7 @@
     <!--TODO Change colors-->
     <style name="Base.Theme.BoxTimer" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <item name="colorPrimary">@color/bg_dark</item>
+        <item name="colorPrimary">@color/dark_purple</item>
     </style>
 
     <style name="Theme.BoxTimer" parent="Base.Theme.BoxTimer"/>

@@ -23,7 +23,6 @@ public class RunningTimerViewModel extends ViewModel {
     private static final String TAG = "RunningTimerVM";
     private final MutableLiveData<Boolean> running = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> resting = new MutableLiveData<>(false);
-    private final MutableLiveData<String> totalTimeText = new MutableLiveData<>();
     private final MutableLiveData<String> runningTimerText = new MutableLiveData<>();
     private final MutableLiveData<String> numRoundsLeftText = new MutableLiveData<>();
     private final MutableLiveData<String> restTimeLeftText = new MutableLiveData<>();
@@ -57,7 +56,6 @@ public class RunningTimerViewModel extends ViewModel {
         restEndTimeMillis = timerConfig.getRestTimer().calculateMillis();
         Long timeMillis = timerConfig.getRoundTimer().calculateMillis();
         Long restMillis = timerConfig.getRestTimer().calculateMillis();
-        Long totalTime = TimeUtils.totalTimeMillis(timerConfig.getRoundTimer(), timerConfig.getRestTimer(), timerConfig.getRounds());
 
         //save future date (finish date) we calculate agains that
         endTimeMillis = SystemClock.elapsedRealtime() + timeMillis;
@@ -71,7 +69,6 @@ public class RunningTimerViewModel extends ViewModel {
         runningTimerText.postValue(time);
         restTimeLeftText.postValue(restTime);
         numRoundsLeftText.postValue(TimeUtils.formatNumRounds(currentRound, roundNumber));
-        totalTimeText.postValue(TimeUtils.format(totalTime));
     }
 
     private final Runnable tickTimerTask = new Runnable() {
@@ -161,10 +158,6 @@ public class RunningTimerViewModel extends ViewModel {
 
     public LiveData<Boolean> isEnded() {
         return ended;
-    }
-
-    public LiveData<String> getTotalTimeText() {
-        return totalTimeText;
     }
 
     public LiveData<String> getDisplayTimeText() {

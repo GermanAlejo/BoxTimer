@@ -18,7 +18,6 @@ import timber.log.Timber;
 
 
 public class MainActivity extends AppCompatActivity {
-
     private static final String TAG = "MainActivity";
     private MainTimerViewModel mainTimerViewModel;
 
@@ -39,12 +38,13 @@ public class MainActivity extends AppCompatActivity {
         Button startButton = findViewById(R.id.start_button);
 
         //Get view text to change
+        TextView totalTimeText = findViewById(R.id.total_time);
         TextView roundTimeText = findViewById(R.id.time_text);
         TextView restTimeText = findViewById(R.id.rest_time);
         TextView numRoundsText = findViewById(R.id.num_rounds);
 
         // 2. Observe state: whenever the ViewModel's value changes, update the screen
-
+        mainTimerViewModel.getTotalTimeText().observe(this, totalTimeText::setText);
 
         //Open timer view
         openNewView(startButton, RunningTimerActivity.class);

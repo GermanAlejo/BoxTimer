@@ -5,13 +5,14 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.german.boxtimer.entity.timer.TimerConfig;
 import com.german.boxtimer.repository.TimerConfigRepository;
-import com.german.boxtimer.entity.timer.TimeSpan;
+import com.german.boxtimer.utils.TimeUtils;
 import timber.log.Timber;
 
 
 public class MainTimerViewModel extends ViewModel {
     private static final String TAG = "MainTimerVM";
     private final TimerConfigRepository timerRepo;
+    private final MutableLiveData<String> totalTimeText = new MutableLiveData<>();
     private final MutableLiveData<String> displayRoundNumber = new MutableLiveData<>();
     private final MutableLiveData<String> displayRestNumber = new MutableLiveData<>();
     private final MutableLiveData<String> displayNumRoundsNumber = new MutableLiveData<>();
@@ -33,6 +34,11 @@ public class MainTimerViewModel extends ViewModel {
 
     // function to initialize display elements
     private void initializeDisplayData() {
+        //Calculate total time
+        Long totalTime = TimeUtils.totalTimeMillis(timerConfig.getRoundTimer(), timerConfig.getRestTimer(), timerConfig.getRounds());
+
+        //Set display values
+        totalTimeText.postValue(TimeUtils.format(totalTime));
         displayRoundNumber.postValue(timerConfig.getRoundTimer().toString());
         displayRestNumber.postValue(timerConfig.getRoundTimer().toString());
         displayNumRoundsNumber.postValue(timerConfig.getRounds().toString());
@@ -46,42 +52,44 @@ public class MainTimerViewModel extends ViewModel {
     }
 
     //get display values
+    public LiveData<String> getTotalTimeText() {
+        return totalTimeText;
+    }
+
     public LiveData<String> getRoundTime() {
         return displayRoundNumber;
     }
+
     public LiveData<String> getRestTime() {
         return displayRestNumber;
     }
+
     public LiveData<String> getNumRounds() {
         return displayNumRoundsNumber;
     }
 
     public void increaseRound() {
-        TimeSpan roundTimer = timerConfig.getRoundTimer();
-        roundTimer.incrementSeconds();
+        final String time = timerConfig.increaseRoundTimer();
         isDirty = true;
-        changeButtonStatus(displayRoundNumber, roundTimer.toString());
+        changeButtonStatus(displayRoundNumber, time);
     }
 
     public void decreaseRound() {
-        TimeSpan roundTimer = timerConfig.getRoundTimer();
-        roundTimer.decrementSeconds();
+        final String time = timerConfig.decreaseRoundTimer();
         isDirty = true;
-        changeButtonStatus(displayRoundNumber, roundTimer.toString());
+        changeButtonStatus(displayRoundNumber, time);
     }
 
     public void increaseRest() {
-        TimeSpan restTimer = timerConfig.getRestTimer();
-        restTimer.incrementSeconds();
+        final String time = timerConfig.increaseRestTimer();
         isDirty = true;
-        changeButtonStatus(displayRestNumber, restTimer.toString());
+        changeButtonStatus(displayRestNumber, time);
     }
 
     public void decreaseRest() {
-        TimeSpan restTimer = timerConfig.getRestTimer();
-        restTimer.decrementSeconds();
+        final String time = timerConfig.decreaseRestTimer();
         isDirty = true;
-        changeButtonStatus(displayRestNumber, restTimer.toString());
+        changeButtonStatus(displayRestNumber, time);
     }
 
     public void increaseNumRounds() {
@@ -98,10 +106,12 @@ public class MainTimerViewModel extends ViewModel {
 
     private void changeButtonStatus(MutableLiveData<String> display, String value) {
         display.setValue(value);
+        //Set the total with all changes
+        totalTimeText.setValue(TimeUtils.format(timerConfig.getTotalTime()));
     }
 
     public void updateTimerData() {
-        if(isDirty) {
+        if (isDirty) {
             //TODO ensure we update total time
             //timerConfig.setTotalTime();
             timerRepo.updateTimerConfig(timerConfig);
@@ -112,7 +122,7 @@ public class MainTimerViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         Timber.tag(TAG).i("Main View closed");
-        if(isDirty) {
+        if (isDirty) {
             timerRepo.updateTimerConfig(timerConfig);
         }
     }

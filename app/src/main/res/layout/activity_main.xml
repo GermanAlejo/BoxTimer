@@ -23,6 +23,18 @@
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   android:orientation="vertical">
+        <!-- Total Training time -->
+        <LinearLayout style="@style/MainColumnContainerStyle">
+            <TextView android:id="@+id/total_time_text"
+                      style="@style/MainColumnStyle"
+                      android:text="@string/training_time_text"
+                      android:textSize="15sp"/>
+            <TextView
+                    android:id="@+id/total_time"
+                    style="@style/MainColumnStyle"
+                    android:text="@string/timer_default"
+                    android:textSize="35sp"/>
+        </LinearLayout>
         <!-- initial config -->
         <LinearLayout style="@style/MainColumnContainerStyle">
             <!-- Timer config -->
@@ -30,15 +42,13 @@
                     android:id="@+id/round_time_text"
                     style="@style/MainColumnStyle"
                     android:text="@string/round_time"
-                    android:textSize="15sp"
-                    android:textColor="@color/white"/>
+                    android:textSize="15sp"/>
             <!-- timer text -->
             <TextView
                     android:id="@+id/time_text"
                     style="@style/MainColumnStyle"
                     android:text="@string/timer_default"
-                    android:textSize="35sp"
-                    android:textColor="@color/white"/>
+                    android:textSize="25sp"/>
             <!-- + - Buttons -->
             <include android:id="@+id/control_round"
                      style="@style/MainColumnStyle"
@@ -50,17 +60,13 @@
                     android:id="@+id/rest_time_text"
                     style="@style/MainColumnStyle"
                     android:text="@string/rest_time_text"
-                    android:textSize="15sp"
-                    android:fontFamily="monospace"
-                    android:textColor="@color/white"/>
+                    android:textSize="15sp"/>
             <!-- Rest timer text-->
             <TextView
                     android:id="@+id/rest_time"
                     style="@style/MainColumnStyle"
                     android:text="@string/rest_time_default"
-                    android:textSize="35sp"
-                    android:fontFamily="monospace"
-                    android:textColor="@color/white"/>
+                    android:textSize="25sp"/>
             <!-- + - Buttons -->
             <include android:id="@+id/control_rest"
                      style="@style/MainColumnStyle"
@@ -71,16 +77,12 @@
                     android:id="@+id/num_rounds_text"
                     style="@style/MainColumnStyle"
                     android:text="@string/num_rounds_text"
-                    android:textSize="15sp"
-                    android:fontFamily="monospace"
-                    android:textColor="@color/white"/>
+                    android:textSize="15sp"/>
             <TextView
                     android:id="@+id/num_rounds"
                     style="@style/MainColumnStyle"
                     android:text="@string/num_rounds_default"
-                    android:textSize="35sp"
-                    android:fontFamily="monospace"
-                    android:textColor="@color/white"/>
+                    android:textSize="25sp"/>
             <!-- + - Buttons -->
             <include android:id="@+id/control_number_rounds"
                      style="@style/MainColumnStyle"
@@ -93,7 +95,7 @@
                 android:layout_gravity="center"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="100dp">
             <!-- start button -->
             <Button
                     android:id="@+id/start_button"

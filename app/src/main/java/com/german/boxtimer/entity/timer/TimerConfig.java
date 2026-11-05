@@ -4,12 +4,12 @@ import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import com.german.boxtimer.utils.TimeConstants;
+import com.german.boxtimer.utils.TimeUtils;
 
 import java.time.Instant;
 
 @Entity
 public class TimerConfig {
-
     @PrimaryKey(autoGenerate = true)
     private Long uid;
     private String name;
@@ -17,10 +17,7 @@ public class TimerConfig {
     private TimeSpan roundTimer;
     @Embedded(prefix = "rest_")
     private TimeSpan restTimer;
-    @Embedded(prefix = "total_")
-    private TimeSpan totalTime;
-    //private sound
-    //private boolean repeats;
+    private Long totalTime;
     private Integer rounds;
     private Instant createdAt;
 
@@ -28,24 +25,59 @@ public class TimerConfig {
         this.createdAt = Instant.now();
     }
 
-    public TimerConfig(String name, TimeSpan roundTimer, TimeSpan restTimer, TimeSpan totalTime,
-                        Integer rounds) {
+    public TimerConfig(String name, TimeSpan roundTimer, TimeSpan restTimer, Long totalTime, Integer rounds) {
         this.name = name;
         this.roundTimer = roundTimer;
         this.restTimer = restTimer;
+        this.totalTime = totalTime;
         this.rounds = rounds;
         this.createdAt = Instant.now();
     }
 
     //Helper methods
+    public String increaseRoundTimer(){
+        roundTimer.incrementSeconds();
+        calculateTotalTime();
+        return roundTimer.toString();
+    }
+
+    public String decreaseRoundTimer(){
+        roundTimer.decrementSeconds();
+        calculateTotalTime();
+        return roundTimer.toString();
+    }
+
+    public String increaseRestTimer(){
+        restTimer.incrementSeconds();
+        calculateTotalTime();
+        return restTimer.toString();
+    }
+
+    public String decreaseRestTimer(){
+        restTimer.decrementSeconds();
+        calculateTotalTime();
+        return restTimer.toString();
+    }
+
     public void incrementRoundNum() {
         rounds++;
+        calculateTotalTime();
     }
 
     public void decrementRoundNum() {
         if(rounds - TimeConstants.MAX_MINUTES_CHANGE > 0) {
             rounds--;
         }
+        calculateTotalTime();
+    }
+
+    public void increment(TimeSpan time) {
+        time.incrementSeconds();
+        calculateTotalTime();
+    }
+
+    private void calculateTotalTime() {
+        totalTime = TimeUtils.totalTimeMillis(roundTimer, restTimer, rounds);
     }
 
     public Long getUid() {
@@ -64,15 +96,6 @@ public class TimerConfig {
         this.name = name;
     }
 
-    //public boolean isRepeats() {
-    //    return repeats;
-    //}
-//
-    //public void setRepeats(boolean repeats) {
-    //    this.repeats = repeats;
-    //}
-
-
     public TimeSpan getRoundTimer() {
         return roundTimer;
     }
@@ -89,11 +112,11 @@ public class TimerConfig {
         this.restTimer = restTimer;
     }
 
-    public TimeSpan getTotalTime() {
+    public Long getTotalTime() {
         return totalTime;
     }
 
-    public void setTotalTime(TimeSpan totalTime) {
+    public void setTotalTime(Long totalTime) {
         this.totalTime = totalTime;
     }
 
