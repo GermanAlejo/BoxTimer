@@ -12,7 +12,7 @@ import com.german.boxtimer.R;
 import com.german.boxtimer.TimerApp;
 import com.german.boxtimer.repository.TimerConfigRepository;
 import com.german.boxtimer.utils.AppViewModelFactory;
-import com.german.boxtimer.utils.TimeConstants;
+import com.german.boxtimer.utils.UtilConstants;
 import com.german.boxtimer.viewModel.MainTimerViewModel;
 import timber.log.Timber;
 
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         view.setOnClickListener(v -> {
             mainTimerViewModel.updateTimerData();
             Intent intent = new Intent(MainActivity.this, targetClass);
-            intent.putExtra(TimeConstants.DEFAULT_TIMER_ID, mainTimerViewModel.getTimerCurrentConfig().getUid());
+            intent.putExtra(UtilConstants.TimeConstants.DEFAULT_TIMER_ID, mainTimerViewModel.getTimerCurrentConfig().getUid());
             startActivity(intent);
         });
     }

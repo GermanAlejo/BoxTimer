@@ -3,7 +3,7 @@ package com.german.boxtimer.entity.timer;
 import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import com.german.boxtimer.utils.TimeConstants;
+import com.german.boxtimer.utils.UtilConstants;
 import com.german.boxtimer.utils.TimeUtils;
 
 import java.time.Instant;
@@ -35,25 +35,25 @@ public class TimerConfig {
     }
 
     //Helper methods
-    public String increaseRoundTimer(){
+    public String increaseRoundTimer() {
         roundTimer.incrementSeconds();
         calculateTotalTime();
         return roundTimer.toString();
     }
 
-    public String decreaseRoundTimer(){
+    public String decreaseRoundTimer() {
         roundTimer.decrementSeconds();
         calculateTotalTime();
         return roundTimer.toString();
     }
 
-    public String increaseRestTimer(){
+    public String increaseRestTimer() {
         restTimer.incrementSeconds();
         calculateTotalTime();
         return restTimer.toString();
     }
 
-    public String decreaseRestTimer(){
+    public String decreaseRestTimer() {
         restTimer.decrementSeconds();
         calculateTotalTime();
         return restTimer.toString();
@@ -65,14 +65,9 @@ public class TimerConfig {
     }
 
     public void decrementRoundNum() {
-        if(rounds - TimeConstants.MAX_MINUTES_CHANGE > 0) {
+        if (rounds - UtilConstants.TimeConstants.MAX_MINUTES_CHANGE > 0) {
             rounds--;
         }
-        calculateTotalTime();
-    }
-
-    public void increment(TimeSpan time) {
-        time.incrementSeconds();
         calculateTotalTime();
     }
 

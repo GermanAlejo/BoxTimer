@@ -10,7 +10,7 @@ import com.german.boxtimer.domain.TimerEngine;
 import com.german.boxtimer.entity.timer.TimerConfig;
 import com.german.boxtimer.repository.TimerConfigRepository;
 import com.german.boxtimer.sound.SoundEffects;
-import com.german.boxtimer.utils.TimeConstants;
+import com.german.boxtimer.utils.UtilConstants;
 import com.german.boxtimer.utils.TimeUtils;
 import timber.log.Timber;
 
@@ -191,7 +191,7 @@ public class RunningTimerViewModel extends ViewModel {
 
     private void endTraining() {
         Timber.tag(TAG).i("Training ended");
-        runningTimerText.setValue(TimeConstants.MIN_MINUTES_TEXT);
+        runningTimerText.setValue(UtilConstants.TimeConstants.MIN_MINUTES_TEXT);
         numRoundsLeftText.setValue(formatNumRounds(timerConfig.getRounds(), timerConfig.getRounds()));
         running.setValue(false);
         resting.setValue(false);

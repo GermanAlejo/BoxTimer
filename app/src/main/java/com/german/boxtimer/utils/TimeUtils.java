@@ -5,7 +5,7 @@ import com.german.boxtimer.entity.timer.TimeSpan;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class TimeUtils {
+public final class TimeUtils {
 
     /**
      * Returns total training time in millis
