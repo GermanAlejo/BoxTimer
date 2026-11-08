@@ -3,9 +3,12 @@ package com.german.boxtimer.domain;
 
 import com.german.boxtimer.entity.timer.TimerConfig;
 import com.german.boxtimer.sound.SoundEffects;
-import com.german.boxtimer.utils.TimeUtils;
 import timber.log.Timber;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.german.boxtimer.utils.TimeUtils.getBeepToPlay;
 import static com.german.boxtimer.utils.UtilConstants.TimeConstants.LAST_SECOND_COUNTDOWN;
 
 /**
@@ -15,7 +18,7 @@ public class TimerEngine {
     private static final String TAG = "TimerEngine";
     private final SoundEffects soundPlayer;
     private TimerConfig timerConfig;
-    private long lastSecondMillis;
+    private Map<Integer, Boolean> beepMap;
     private boolean isPaused = false;
     private long pauseTimeMillis;
     private long endTimeMillis;
@@ -26,7 +29,7 @@ public class TimerEngine {
     public TimerEngine(TimerConfig timerConfig, SoundEffects soundPlayer) {
         this.timerConfig = timerConfig;
         this.soundPlayer = soundPlayer;
-        lastSecondMillis = 0L;
+        beepMap = new HashMap<>(Map.of(1, false, 2, false, 3, false, 4, false));
     }
 
     public void playBell() {
@@ -45,17 +48,21 @@ public class TimerEngine {
         soundPlayer.playBeep();
     }
 
-    public void finalSeconds(Long remaining) {
-        if(remaining < LAST_SECOND_COUNTDOWN) {
-            Timber.tag(TAG).i("Last seconds... playing beep");
-            if(TimeUtils.hasSecondPassed(lastSecondMillis, remaining)){
+    public void finalSecondsCountdown(Long remaining) {
+        long secondsLeft = remaining;
+        if (secondsLeft >= 0L && secondsLeft <= LAST_SECOND_COUNTDOWN) {
+            if (getBeepToPlay(secondsLeft, beepMap) != 0) {
+                Timber.tag(TAG).i("Last seconds... playing beep");
                 playBeep();
             }
-            lastSecondMillis = remaining;
+            return;
         }
+        //reset map
+        beepMap.replaceAll((integer, aBoolean) -> false);
     }
 
     public void clearEngine() {
+        beepMap.replaceAll((integer, aBoolean) -> false);
         soundPlayer.release();
     }
 

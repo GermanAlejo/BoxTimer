@@ -85,8 +85,7 @@ public class SoundPlayer implements SoundEffects {
         int streamId = soundPool.play(beepId,
                 UtilConstants.SoundConstants.LEFT_VOLUME,
                 UtilConstants.SoundConstants.RIGHT_VOLUME,
-                0, 2,
-                UtilConstants.SoundConstants.SOUND_RATE);
+                0, 0, 2);
         if (streamId == 0) {
             Timber.tag(TAG).e("Could not play sound");
         }

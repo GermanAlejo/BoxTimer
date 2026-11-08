@@ -11,7 +11,6 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class TimerConfigRepositoryImpl implements TimerConfigRepository {
-
     private static final String TAG = "TimerConfigRepository";
 
     private final TimerDao timerDao;

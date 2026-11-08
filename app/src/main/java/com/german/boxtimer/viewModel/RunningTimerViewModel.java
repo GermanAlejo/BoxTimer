@@ -74,7 +74,6 @@ public class RunningTimerViewModel extends ViewModel {
     private final Runnable tickTimerTask = new Runnable() {
         @Override
         public void run() {
-            Timber.tag(TAG).i("Starting round clock timer");
             //check whether we are counting round or rest
             long remaining;
             MutableLiveData<String> timeText;
@@ -85,6 +84,7 @@ public class RunningTimerViewModel extends ViewModel {
                 //Total time minus current moment
                 remaining = endTimeMillis - SystemClock.elapsedRealtime();
                 timeText = runningTimerText;
+                timerEngine.finalSecondsCountdown(remaining);
             }
 
             // check if round finished
@@ -107,6 +107,7 @@ public class RunningTimerViewModel extends ViewModel {
     };
 
     public void start() {
+        Timber.tag(TAG).i("Starting round clock timer");
         if (timerConfig == null) return;   // not loaded yet
         if (Boolean.TRUE.equals(running.getValue())) {
             return;
@@ -129,15 +130,19 @@ public class RunningTimerViewModel extends ViewModel {
     }
 
     public void reset() {
+        Timber.tag(TAG).i("Resetting round clock timer");
         handler.removeCallbacks(tickTimerTask);
         running.setValue(false);
         resting.setValue(false);
         ended.setValue(false);
         isPaused = false;
+        //Clear engine values
+        timerEngine.clearEngine();
         initializeDisplayData();
     }
 
     public void pause() {
+        Timber.tag(TAG).i("Pausing round clock timer");
         isPaused = true;
         if (Boolean.TRUE.equals(isResting().getValue())) {
             pauseTimeMillis = restEndTimeMillis - SystemClock.elapsedRealtime();
@@ -200,6 +205,7 @@ public class RunningTimerViewModel extends ViewModel {
 
     @Override
     protected void onCleared() {
+        Timber.tag(TAG).i("Clearing timer");
         handler.removeCallbacks(tickTimerTask);   // screen is gone for good: stop ticking
         timerEngine.clearEngine();
     }
