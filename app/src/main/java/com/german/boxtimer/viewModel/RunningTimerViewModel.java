@@ -136,8 +136,6 @@ public class RunningTimerViewModel extends ViewModel {
         resting.setValue(false);
         ended.setValue(false);
         isPaused = false;
-        //Clear engine values
-        timerEngine.clearEngine();
         initializeDisplayData();
     }
 

@@ -1,6 +1,5 @@
 package com.german.boxtimer.utils;
 
-import android.os.SystemClock;
 import com.german.boxtimer.entity.timer.TimeSpan;
 import timber.log.Timber;
 

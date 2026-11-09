@@ -5,5 +5,5 @@ public interface SoundEffects {
     void playSingleBell();
     void playFinalBell();
     void playBeep();
-    public void release();
+    void release();
 }
