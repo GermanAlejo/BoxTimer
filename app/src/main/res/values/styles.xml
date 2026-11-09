@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--Main activity view styles-->
     <!--style container of columns-->
     <style name="MainColumnContainerStyle">
         <item name="android:orientation">horizontal</item>
@@ -17,5 +18,22 @@
         <item name="android:color">@color/white</item>
         <item name="android:fontFamily">monospace</item>
         <item name="android:padding">10dp</item>
+    </style>
+
+    <!-- Running timer activity view styles -->
+    <style name="RoundContainerStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+    <style name="RunningTimerContainerStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+    <style name="RunningTimerStyle">
+
     </style>
 </resources>
