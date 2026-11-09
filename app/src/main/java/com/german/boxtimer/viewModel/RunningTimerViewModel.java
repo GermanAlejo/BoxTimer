@@ -48,7 +48,7 @@ public class RunningTimerViewModel extends ViewModel {
             initializeDisplayData();
         });
         //Initialize domain engine
-        timerEngine = new TimerEngine(timerConfig, soundEffects);
+        timerEngine = new TimerEngine(soundEffects);
     }
 
     private void initializeDisplayData() {

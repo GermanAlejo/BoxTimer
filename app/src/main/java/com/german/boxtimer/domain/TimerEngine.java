@@ -17,12 +17,10 @@ import static com.german.boxtimer.utils.UtilConstants.TimeConstants.LAST_SECOND_
 public class TimerEngine {
     private static final String TAG = "TimerEngine";
     private final SoundEffects soundPlayer;
-    private TimerConfig timerConfig;
     private final Map<Integer, Boolean> beepMap;
 
 
-    public TimerEngine(TimerConfig timerConfig, SoundEffects soundPlayer) {
-        this.timerConfig = timerConfig;
+    public TimerEngine(SoundEffects soundPlayer) {
         this.soundPlayer = soundPlayer;
         beepMap = new HashMap<>(Map.of(1, false, 2, false, 3, false, 4, false));
     }

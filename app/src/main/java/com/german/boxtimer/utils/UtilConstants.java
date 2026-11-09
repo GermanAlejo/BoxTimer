@@ -20,8 +20,8 @@ public final class UtilConstants {
 
     public static class SoundConstants {
         private SoundConstants(){}
-        public static final float LEFT_VOLUME = 1f;
-        public static final float RIGHT_VOLUME = 1f;
+        public static final float LEFT_VOLUME = 2f;
+        public static final float RIGHT_VOLUME = 2f;
         public static final float SOUND_RATE = 1.5f;
 
     }
