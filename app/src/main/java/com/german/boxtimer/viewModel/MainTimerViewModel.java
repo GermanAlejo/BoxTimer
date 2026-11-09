@@ -112,8 +112,6 @@ public class MainTimerViewModel extends ViewModel {
 
     public void updateTimerData() {
         if (isDirty) {
-            //TODO ensure we update total time
-            //timerConfig.setTotalTime();
             timerRepo.updateTimerConfig(timerConfig);
         }
         isDirty = false;

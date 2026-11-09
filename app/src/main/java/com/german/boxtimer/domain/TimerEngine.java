@@ -18,13 +18,8 @@ public class TimerEngine {
     private static final String TAG = "TimerEngine";
     private final SoundEffects soundPlayer;
     private TimerConfig timerConfig;
-    private Map<Integer, Boolean> beepMap;
-    private boolean isPaused = false;
-    private long pauseTimeMillis;
-    private long endTimeMillis;
-    private long restEndTimeMillis;
-    private int roundNumber;
-    private int currentRound;
+    private final Map<Integer, Boolean> beepMap;
+
 
     public TimerEngine(TimerConfig timerConfig, SoundEffects soundPlayer) {
         this.timerConfig = timerConfig;
