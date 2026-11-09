@@ -1,17 +1,19 @@
 package com.german.boxtimer.utils;
 
 import com.german.boxtimer.entity.timer.TimeSpan;
+import timber.log.Timber;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class TimeUtils {
+public final class TimeUtils {
 
     /**
      * Returns total training time in millis
      *
      * @param roundTime time of each round in millis (long)
-     * @param restTime time of each rest in millis (long)
+     * @param restTime  time of each rest in millis (long)
      * @param numRounds total of rounds of training in int
      * @return total training considering all rounds with rest time included in Milliseconds
      */
@@ -57,10 +59,25 @@ public class TimeUtils {
      * Formats the Rounds to a string from int
      *
      * @param numRoundsLeft num rounds left
-     * @param totalRounds total num of rounds
+     * @param totalRounds   total num of rounds
      * @return String format with rounds Ex: 1/3
      */
     public static String formatNumRounds(int numRoundsLeft, int totalRounds) {
         return String.format(Locale.getDefault(), "%d/%d", numRoundsLeft, totalRounds);
+    }
+
+    private static int millisToSeconds(Long time) {
+        return (int) (time + 999) / 1000;
+    }
+
+    public static int getBeepToPlay(final long millisRemaining, Map<Integer, Boolean> beepBoolMap) {
+        int secondsRemaining = millisToSeconds(millisRemaining);
+        var hasPlayed = beepBoolMap.get(secondsRemaining);
+        Timber.tag("TAG").d("Checking beep, secondsLeft: %d", secondsRemaining);
+        if (hasPlayed != null && !hasPlayed) {
+            beepBoolMap.replace(secondsRemaining, true);
+            return secondsRemaining;
+        }
+        return 0;
     }
 }

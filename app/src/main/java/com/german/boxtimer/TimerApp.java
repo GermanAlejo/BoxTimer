@@ -17,7 +17,7 @@ public class TimerApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        Timber.plant(new Timber.DebugTree());
         Timber.tag(TAG).i("Application started, creating database");
         db = Room.databaseBuilder(this, AppDatabase.class, "timers.db").build();
         repository = new TimerConfigRepositoryImpl(db.timerDao());

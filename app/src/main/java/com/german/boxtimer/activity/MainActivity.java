@@ -12,13 +12,12 @@ import com.german.boxtimer.R;
 import com.german.boxtimer.TimerApp;
 import com.german.boxtimer.repository.TimerConfigRepository;
 import com.german.boxtimer.utils.AppViewModelFactory;
-import com.german.boxtimer.utils.TimeConstants;
+import com.german.boxtimer.utils.UtilConstants;
 import com.german.boxtimer.viewModel.MainTimerViewModel;
 import timber.log.Timber;
 
 
 public class MainActivity extends AppCompatActivity {
-
     private static final String TAG = "MainActivity";
     private MainTimerViewModel mainTimerViewModel;
 
@@ -36,15 +35,16 @@ public class MainActivity extends AppCompatActivity {
         View numberControlView = findViewById(R.id.control_number_rounds);
 
         //Button to start timer
-        Button startButton = findViewById(R.id.startButton);
+        Button startButton = findViewById(R.id.start_button);
 
         //Get view text to change
-        TextView roundTimeText = findViewById(R.id.timeText);
+        TextView totalTimeText = findViewById(R.id.total_time);
+        TextView roundTimeText = findViewById(R.id.time_text);
         TextView restTimeText = findViewById(R.id.rest_time);
-        TextView numRoundsText = findViewById(R.id.numRounds);
+        TextView numRoundsText = findViewById(R.id.num_rounds);
 
         // 2. Observe state: whenever the ViewModel's value changes, update the screen
-
+        mainTimerViewModel.getTotalTimeText().observe(this, totalTimeText::setText);
 
         //Open timer view
         openNewView(startButton, RunningTimerActivity.class);
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         view.setOnClickListener(v -> {
             mainTimerViewModel.updateTimerData();
             Intent intent = new Intent(MainActivity.this, targetClass);
-            intent.putExtra(TimeConstants.DEFAULT_TIMER_ID, mainTimerViewModel.getTimerCurrentConfig().getUid());
+            intent.putExtra(UtilConstants.TimeConstants.DEFAULT_TIMER_ID, mainTimerViewModel.getTimerCurrentConfig().getUid());
             startActivity(intent);
         });
     }

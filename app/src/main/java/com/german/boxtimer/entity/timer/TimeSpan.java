@@ -1,7 +1,7 @@
 package com.german.boxtimer.entity.timer;
 
 
-import com.german.boxtimer.utils.TimeConstants;
+import com.german.boxtimer.utils.UtilConstants;
 import com.german.boxtimer.utils.TimeUtils;
 
 /**
@@ -21,31 +21,31 @@ public class TimeSpan {
     }
 
     private void incrementMinutes() {
-        minutes+= TimeConstants.MAX_MINUTES_CHANGE;
-        seconds = TimeConstants.MIN_MINUTE_SECONDS;
+        minutes+= UtilConstants.TimeConstants.MAX_MINUTES_CHANGE;
+        seconds = UtilConstants.TimeConstants.MIN_MINUTE_SECONDS;
     }
 
     private void decrementMinutes() {
-        if(minutes > TimeConstants.MIN_MINUTE_SECONDS) {
-            minutes-=TimeConstants.MAX_MINUTES_CHANGE;
-            seconds = TimeConstants.MAX_SECONDS_VALUE;
+        if(minutes > UtilConstants.TimeConstants.MIN_MINUTE_SECONDS) {
+            minutes-= UtilConstants.TimeConstants.MAX_MINUTES_CHANGE;
+            seconds = UtilConstants.TimeConstants.MAX_SECONDS_VALUE;
         }
         //TODO: show warning here
     }
 
     public void incrementSeconds() {
-        if(seconds + TimeConstants.MAX_SECONDS_CHANGE >= TimeConstants.MAX_MINUTE_SECONDS) {
+        if(seconds + UtilConstants.TimeConstants.MAX_SECONDS_CHANGE >= UtilConstants.TimeConstants.MAX_MINUTE_SECONDS) {
             incrementMinutes();
         } else {
-            seconds+=TimeConstants.MAX_SECONDS_CHANGE;
+            seconds+= UtilConstants.TimeConstants.MAX_SECONDS_CHANGE;
         }
     }
 
     public void decrementSeconds() {
-        if(seconds - TimeConstants.MAX_SECONDS_CHANGE <= TimeConstants.MIN_MINUTE_SECONDS) {
+        if(seconds - UtilConstants.TimeConstants.MAX_SECONDS_CHANGE <= UtilConstants.TimeConstants.MIN_MINUTE_SECONDS) {
             decrementMinutes();
         } else {
-            seconds-=TimeConstants.MAX_SECONDS_CHANGE;
+            seconds-= UtilConstants.TimeConstants.MAX_SECONDS_CHANGE;
         }
     }
 

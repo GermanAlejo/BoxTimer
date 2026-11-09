@@ -10,7 +10,7 @@ import com.german.boxtimer.domain.TimerEngine;
 import com.german.boxtimer.entity.timer.TimerConfig;
 import com.german.boxtimer.repository.TimerConfigRepository;
 import com.german.boxtimer.sound.SoundEffects;
-import com.german.boxtimer.utils.TimeConstants;
+import com.german.boxtimer.utils.UtilConstants;
 import com.german.boxtimer.utils.TimeUtils;
 import timber.log.Timber;
 
@@ -23,7 +23,6 @@ public class RunningTimerViewModel extends ViewModel {
     private static final String TAG = "RunningTimerVM";
     private final MutableLiveData<Boolean> running = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> resting = new MutableLiveData<>(false);
-    private final MutableLiveData<String> totalTimeText = new MutableLiveData<>();
     private final MutableLiveData<String> runningTimerText = new MutableLiveData<>();
     private final MutableLiveData<String> numRoundsLeftText = new MutableLiveData<>();
     private final MutableLiveData<String> restTimeLeftText = new MutableLiveData<>();
@@ -49,7 +48,7 @@ public class RunningTimerViewModel extends ViewModel {
             initializeDisplayData();
         });
         //Initialize domain engine
-        timerEngine = new TimerEngine(timerConfig, soundEffects);
+        timerEngine = new TimerEngine(soundEffects);
     }
 
     private void initializeDisplayData() {
@@ -57,7 +56,6 @@ public class RunningTimerViewModel extends ViewModel {
         restEndTimeMillis = timerConfig.getRestTimer().calculateMillis();
         Long timeMillis = timerConfig.getRoundTimer().calculateMillis();
         Long restMillis = timerConfig.getRestTimer().calculateMillis();
-        Long totalTime = TimeUtils.totalTimeMillis(timerConfig.getRoundTimer(), timerConfig.getRestTimer(), timerConfig.getRounds());
 
         //save future date (finish date) we calculate agains that
         endTimeMillis = SystemClock.elapsedRealtime() + timeMillis;
@@ -71,13 +69,11 @@ public class RunningTimerViewModel extends ViewModel {
         runningTimerText.postValue(time);
         restTimeLeftText.postValue(restTime);
         numRoundsLeftText.postValue(TimeUtils.formatNumRounds(currentRound, roundNumber));
-        totalTimeText.postValue(TimeUtils.format(totalTime));
     }
 
     private final Runnable tickTimerTask = new Runnable() {
         @Override
         public void run() {
-            Timber.tag(TAG).i("Starting round clock timer");
             //check whether we are counting round or rest
             long remaining;
             MutableLiveData<String> timeText;
@@ -88,6 +84,7 @@ public class RunningTimerViewModel extends ViewModel {
                 //Total time minus current moment
                 remaining = endTimeMillis - SystemClock.elapsedRealtime();
                 timeText = runningTimerText;
+                timerEngine.finalSecondsCountdown(remaining);
             }
 
             // check if round finished
@@ -110,6 +107,7 @@ public class RunningTimerViewModel extends ViewModel {
     };
 
     public void start() {
+        Timber.tag(TAG).i("Starting round clock timer");
         if (timerConfig == null) return;   // not loaded yet
         if (Boolean.TRUE.equals(running.getValue())) {
             return;
@@ -132,6 +130,7 @@ public class RunningTimerViewModel extends ViewModel {
     }
 
     public void reset() {
+        Timber.tag(TAG).i("Resetting round clock timer");
         handler.removeCallbacks(tickTimerTask);
         running.setValue(false);
         resting.setValue(false);
@@ -141,6 +140,7 @@ public class RunningTimerViewModel extends ViewModel {
     }
 
     public void pause() {
+        Timber.tag(TAG).i("Pausing round clock timer");
         isPaused = true;
         if (Boolean.TRUE.equals(isResting().getValue())) {
             pauseTimeMillis = restEndTimeMillis - SystemClock.elapsedRealtime();
@@ -161,10 +161,6 @@ public class RunningTimerViewModel extends ViewModel {
 
     public LiveData<Boolean> isEnded() {
         return ended;
-    }
-
-    public LiveData<String> getTotalTimeText() {
-        return totalTimeText;
     }
 
     public LiveData<String> getDisplayTimeText() {
@@ -198,7 +194,7 @@ public class RunningTimerViewModel extends ViewModel {
 
     private void endTraining() {
         Timber.tag(TAG).i("Training ended");
-        runningTimerText.setValue(TimeConstants.MIN_MINUTES_TEXT);
+        runningTimerText.setValue(UtilConstants.TimeConstants.MIN_MINUTES_TEXT);
         numRoundsLeftText.setValue(formatNumRounds(timerConfig.getRounds(), timerConfig.getRounds()));
         running.setValue(false);
         resting.setValue(false);
@@ -207,6 +203,7 @@ public class RunningTimerViewModel extends ViewModel {
 
     @Override
     protected void onCleared() {
+        Timber.tag(TAG).i("Clearing timer");
         handler.removeCallbacks(tickTimerTask);   // screen is gone for good: stop ticking
         timerEngine.clearEngine();
     }
