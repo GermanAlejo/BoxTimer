@@ -9,7 +9,7 @@ import com.german.boxtimer.utils.UtilConstants;
 import timber.log.Timber;
 
 import static android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION;
-import static android.media.AudioAttributes.USAGE_ALARM;
+import static android.media.AudioAttributes.USAGE_MEDIA;
 
 /**
  * Class to control sounds
@@ -24,7 +24,7 @@ public class SoundPlayer implements SoundEffects {
     public SoundPlayer(Context context) {
         Timber.tag(TAG).i("Creating sound player");
         android.media.AudioAttributes attributes = new AudioAttributes.Builder()
-                .setUsage(USAGE_ALARM)
+                .setUsage(USAGE_MEDIA)
                 .setContentType(CONTENT_TYPE_SONIFICATION)
                 .build();
         SoundPool.Builder builder = new SoundPool.Builder().setAudioAttributes(attributes);

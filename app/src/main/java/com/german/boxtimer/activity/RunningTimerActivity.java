@@ -1,6 +1,7 @@
 package com.german.boxtimer.activity;
 
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,6 +29,7 @@ public class RunningTimerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.running_timer);
         Timber.tag(TAG).i("Creating running timer view");
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         runningTimerViewModel = getRunningTimerViewModel();
 
