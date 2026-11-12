@@ -8,8 +8,8 @@
     <string name="num_rounds_default">1</string>
     <string name="rest_time_text">REST: </string>
     <string name="rest_time_default">01:00</string>
-    <string name="icon_menos_text">icono menos</string>
-    <string name="icon_mas_text">icono mas</string>
+    <string name="icon_menos_text">plus icon</string>
+    <string name="icon_mas_text">minus icon</string>
     <string name="pause">Pause</string>
     <string name="time_left">TRANING:</string>
     <string name="rounds">ROUND: </string>
