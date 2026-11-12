@@ -41,7 +41,9 @@
                     android:id="@+id/time_text"
                     style="@style/MainColumnStyle"
                     android:text="@string/timer_default"
-                    android:textSize="25sp"/>
+                    android:textSize="25sp"
+                    android:focusable="false"
+                    android:inputType="none"/>
             <!-- + - Buttons -->
             <include android:id="@+id/control_round"
                      style="@style/MainColumnStyle"
@@ -59,7 +61,9 @@
                     android:id="@+id/rest_time"
                     style="@style/MainColumnStyle"
                     android:text="@string/rest_time_default"
-                    android:textSize="25sp"/>
+                    android:textSize="25sp"
+                    android:focusable="false"
+                    android:inputType="none"/>
             <!-- + - Buttons -->
             <include android:id="@+id/control_rest"
                      style="@style/MainColumnStyle"
@@ -75,7 +79,9 @@
                     android:id="@+id/num_rounds"
                     style="@style/MainColumnStyle"
                     android:text="@string/num_rounds_default"
-                    android:textSize="25sp"/>
+                    android:textSize="25sp"
+                    android:focusable="false"
+                    android:inputType="none"/>
             <!-- + - Buttons -->
             <include android:id="@+id/control_number_rounds"
                      style="@style/MainColumnStyle"

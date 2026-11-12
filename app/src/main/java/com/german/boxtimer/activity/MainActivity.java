@@ -1,20 +1,24 @@
 package com.german.boxtimer.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import com.german.boxtimer.R;
 import com.german.boxtimer.TimerApp;
 import com.german.boxtimer.repository.TimerConfigRepository;
+import com.german.boxtimer.utils.ActivityBinder;
 import com.german.boxtimer.utils.AppViewModelFactory;
 import com.german.boxtimer.utils.UtilConstants;
 import com.german.boxtimer.viewModel.MainTimerViewModel;
 import timber.log.Timber;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -29,57 +33,65 @@ public class MainActivity extends AppCompatActivity {
         Timber.tag(TAG).i("Creating main view");
         // 1. Get the ViewModel
         mainTimerViewModel = getMainTimerViewModel();
+        // get the activity binder
+        ActivityBinder binder = new ActivityBinder(this, this);
+
         //Get main control views
-        View roundControlView = findViewById(R.id.control_round);
-        View restControlView = findViewById(R.id.control_rest);
-        View numberControlView = findViewById(R.id.control_number_rounds);
+        final View roundControlView = findViewById(R.id.control_round);
+        final View restControlView = findViewById(R.id.control_rest);
+        final View numberControlView = findViewById(R.id.control_number_rounds);
 
         //Button to start timer
-        Button startButton = findViewById(R.id.start_button);
+        final Button startButton = findViewById(R.id.start_button);
 
         //Get view text to change
-        TextView totalTimeText = findViewById(R.id.total_time);
-        TextView roundTimeText = findViewById(R.id.time_text);
-        TextView restTimeText = findViewById(R.id.rest_time);
-        TextView numRoundsText = findViewById(R.id.num_rounds);
+        final TextView totalTimeText = findViewById(R.id.total_time);
+        final TextView roundTimeText = findViewById(R.id.time_text);
+        final TextView restTimeText = findViewById(R.id.rest_time);
+        final TextView numRoundsText = findViewById(R.id.num_rounds);
 
         // 2. Observe state: whenever the ViewModel's value changes, update the screen
         mainTimerViewModel.getTotalTimeText().observe(this, totalTimeText::setText);
 
         //Open timer view
-        openNewView(startButton, RunningTimerActivity.class);
+        binder.openRunningTimerView(startButton, RunningTimerActivity.class,
+                mainTimerViewModel::updateTimerData, getRunningActivityUI());
 
         // 3. Forward clicks: no logic here
         //set button listeners
-        bindControl(roundControlView, roundTimeText, mainTimerViewModel.getRoundTime(),
+        binder.bindControl(roundControlView, roundTimeText, mainTimerViewModel.getRoundTime(),
                 mainTimerViewModel::increaseRound, mainTimerViewModel::decreaseRound);
-        bindControl(restControlView, restTimeText, mainTimerViewModel.getRestTime(),
+        binder.bindControl(restControlView, restTimeText, mainTimerViewModel.getRestTime(),
                 mainTimerViewModel::increaseRest,
                 mainTimerViewModel::decreaseRest);
-        bindControl(numberControlView, numRoundsText, mainTimerViewModel.getNumRounds(),
+        binder.bindControl(numberControlView, numRoundsText, mainTimerViewModel.getNumRounds(),
                 mainTimerViewModel::increaseNumRounds, mainTimerViewModel::decreaseNumRounds);
-    }
 
-    public <T>void openNewView(Button view, Class<T> targetClass) {
-        Timber.tag(TAG).i("Loading new view");
-        view.setOnClickListener(v -> {
-            mainTimerViewModel.updateTimerData();
-            Intent intent = new Intent(MainActivity.this, targetClass);
-            intent.putExtra(UtilConstants.TimeConstants.DEFAULT_TIMER_ID, mainTimerViewModel.getTimerCurrentConfig().getUid());
-            startActivity(intent);
-        });
-    }
+        //get texts from layut
+        final TextView roundTitle = findViewById(R.id.round_time_text);
+        final TextView restTitle = findViewById(R.id.rest_time_text);
 
-    private void bindControl(View control, TextView textView, LiveData<String> dataValue, Runnable moreFunc, Runnable lessFunc) {
-        control.findViewById(R.id.more_button).setOnClickListener(v -> moreFunc.run());
-        control.findViewById(R.id.less_button).setOnClickListener(v -> lessFunc.run());
-
-        dataValue.observe(this, textView::setText);
+        //Set popUps for time set
+        binder.bindPickerControl(roundTitle.getText().toString(),
+                roundTimeText,
+                () -> mainTimerViewModel.getRoundTimeValue().getValue(),
+                mainTimerViewModel::setRoundTime);
+        binder.bindPickerControl(restTitle.getText().toString(),
+                restTimeText,
+                () -> mainTimerViewModel.getRestTimeValue().getValue(),
+                mainTimerViewModel::setRestTime);
     }
 
     private MainTimerViewModel getMainTimerViewModel() {
         TimerConfigRepository repo = ((TimerApp) getApplication()).getRepository();
         return new ViewModelProvider(this, new AppViewModelFactory(repo))
                 .get(MainTimerViewModel.class);
+    }
+
+    private Map<String, Supplier<Serializable>> getRunningActivityUI() {
+        Map<String, Supplier<Serializable>> valueMap = new HashMap<>();
+        valueMap.put(UtilConstants.TimeConstants.DEFAULT_TIMER_ID,
+                () -> mainTimerViewModel.getTimerCurrentConfig().getUid());
+        return valueMap;
     }
 }

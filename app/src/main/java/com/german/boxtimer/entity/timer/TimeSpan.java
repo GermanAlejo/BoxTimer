@@ -1,6 +1,7 @@
 package com.german.boxtimer.entity.timer;
 
 
+import androidx.annotation.NonNull;
 import com.german.boxtimer.utils.UtilConstants;
 import com.german.boxtimer.utils.TimeUtils;
 
@@ -65,6 +66,7 @@ public class TimeSpan {
         this.seconds = seconds;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return TimeUtils.format(calculateMillis());

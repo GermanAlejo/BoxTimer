@@ -3,6 +3,7 @@ package com.german.boxtimer.viewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.german.boxtimer.entity.timer.TimeSpan;
 import com.german.boxtimer.entity.timer.TimerConfig;
 import com.german.boxtimer.repository.TimerConfigRepository;
 import com.german.boxtimer.utils.TimeUtils;
@@ -16,6 +17,8 @@ public class MainTimerViewModel extends ViewModel {
     private final MutableLiveData<String> displayRoundNumber = new MutableLiveData<>();
     private final MutableLiveData<String> displayRestNumber = new MutableLiveData<>();
     private final MutableLiveData<String> displayNumRoundsNumber = new MutableLiveData<>();
+    private final MutableLiveData<TimeSpan> roundTimeValue = new MutableLiveData<>();
+    private final MutableLiveData<TimeSpan> restTimeValue = new MutableLiveData<>();
     private TimerConfig timerConfig;
     //Flag to control if the config was changed
     private boolean isDirty = false;
@@ -34,20 +37,25 @@ public class MainTimerViewModel extends ViewModel {
 
     // function to initialize display elements
     private void initializeDisplayData() {
+        final TimeSpan roundTimer = timerConfig.getRoundTimer();
+        final TimeSpan restTimer = timerConfig.getRestTimer();
+        final Integer rounds = timerConfig.getRounds();
         //Calculate total time
-        Long totalTime = TimeUtils.totalTimeMillis(timerConfig.getRoundTimer(), timerConfig.getRestTimer(), timerConfig.getRounds());
+        Long totalTime = TimeUtils.totalTimeMillis(roundTimer, restTimer, rounds);
 
         //Set display values
         totalTimeText.postValue(TimeUtils.format(totalTime));
-        displayRoundNumber.postValue(timerConfig.getRoundTimer().toString());
-        displayRestNumber.postValue(timerConfig.getRoundTimer().toString());
-        displayNumRoundsNumber.postValue(timerConfig.getRounds().toString());
+        displayRoundNumber.postValue(roundTimer.toString());
+        displayRestNumber.postValue(restTimer.toString());
+        displayNumRoundsNumber.postValue(rounds.toString());
+        roundTimeValue.postValue(roundTimer);
+        restTimeValue.postValue(restTimer);
     }
 
     // Exposed read-only: the Activity can observe but not change the values
 
     //get config timer for the activity class
-    public final TimerConfig getTimerCurrentConfig() {
+    public TimerConfig getTimerCurrentConfig() {
         return timerConfig;
     }
 
@@ -62,6 +70,14 @@ public class MainTimerViewModel extends ViewModel {
 
     public LiveData<String> getRestTime() {
         return displayRestNumber;
+    }
+
+    public LiveData<TimeSpan> getRoundTimeValue() {
+        return roundTimeValue;
+    }
+
+    public LiveData<TimeSpan> getRestTimeValue() {
+        return restTimeValue;
     }
 
     public LiveData<String> getNumRounds() {
@@ -102,6 +118,22 @@ public class MainTimerViewModel extends ViewModel {
         timerConfig.decrementRoundNum();
         isDirty = true;
         changeButtonStatus(displayNumRoundsNumber, timerConfig.getRounds().toString());
+    }
+
+    public void setRoundTime(int minutes, int seconds) {
+        TimeSpan newTime = new TimeSpan(minutes, seconds);
+        isDirty = true;
+        roundTimeValue.setValue(newTime);
+        timerConfig.setRoundTimer(newTime);
+        changeButtonStatus(displayRoundNumber, newTime.toString());
+    }
+
+    public void setRestTime(int minutes, int seconds) {
+        TimeSpan newTime = new TimeSpan(minutes, seconds);
+        isDirty = true;
+        restTimeValue.setValue(newTime);
+        timerConfig.setRestTimer(newTime);
+        changeButtonStatus(displayRestNumber, newTime.toString());
     }
 
     private void changeButtonStatus(MutableLiveData<String> display, String value) {

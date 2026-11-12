@@ -7,6 +7,7 @@ public final class UtilConstants {
         private TimeConstants(){}
         public static final String DEFAULT_TIMER_ID = "timerId";
         public static final String MIN_MINUTES_TEXT = "00:00";
+        public static final String PICKER_FORMAT = "%02d";
 
         //Number constants
         public static final int MAX_MINUTES_CHANGE = 1;
