@@ -9,7 +9,7 @@ import timber.log.Timber;
 
 
 public class TimerApp extends Application {
-    private static final String TAG = "Application";
+    private static final String TAG = "TimerApp";
 
     private AppDatabase db;
     private TimerConfigRepository repository;
