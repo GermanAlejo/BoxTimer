@@ -4,8 +4,6 @@ A simple Android interval timer for boxing, martial arts and similar training. C
 
 The app is written in Java and uses no Google services (no Play Services, Firebase or analytics). It is designed to work on GrapheneOS and on other Android devices.
 
-> **Status:** work in progress.
-
 ## Features
 
 - Configurable timer: round time, rest time and number of rounds (minutes and seconds)
