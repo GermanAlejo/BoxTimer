@@ -102,7 +102,7 @@ Activity -> ViewModel -> Repository -> DAO -> Room database
 - [ ] UI
   - [x] Basic UI for testing
   - [ ] Proper usable UI
-- [ ] Run timers in a foreground service so they keep going with the screen off
-- [ ] Exact alarms and notifications
-- [ ] Stopwatch mode with laps
+- [x] Run timers in a foreground service so they keep going with the screen off
+- [x] Exact alarms and notifications
+- [x] Stopwatch mode with laps
 - [ ] Settings (sound, vibration, theme)
